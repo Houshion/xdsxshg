@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>购物车</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .type {
+        display: none;
+    }
+    </style>
+
+    <body>
+        <div class="bigBox bw">
+            <div class="banner flex p40">
+                <img src="../img/bg_1.png" style="width: 4.06rem;height: 3.86rem" />
+            </div>
+            <div class="type type1">
+                <p class="mt40 tac color1 font18 bold">购物成功</p>
+                <p class="mt40 tac font18 col9">请及时取走您的商品！</p>
+            </div>
+            <div class="type type2">
+                <p class="mt40 tac color1 font18 bold">购物成功</p>
+                <p class="mt40 tac font18 bold code">您的取货码：1235</p>
+                <p class="mt40 tac font18 col9">请及时取走您的商品！</p>
+            </div>
+            <div class="type type3">
+                <p class="mt40 tac color1 font18 bold">购物成功</p>
+                <p class="mt40 tac font18 bold phone">送货员电话：13502315635</p>
+                <p class="mt40 tac font18 col9">请耐心等待送货员给您取货配送！</p>
+            </div>
+            <div class="main_btn">查看订单</div>
+        </div>
+    </body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script>
+if (getUrlParam('type') == 1) {
+    $('.type1').show();
+} else if (getUrlParam('type') == 2) {
+    $('.type2').show();
+    $('.code').text("您的取货码："+getUrlParam('code'));
+} else if (getUrlParam('type') == 3) {
+    $('.type3').show();
+    $('.phone').text("送货员电话："+getUrlParam('phone'));
+}
+
+$(".main_btn").on("click", function (){
+    location.href="./o_user_order.html"
+})
+</script>

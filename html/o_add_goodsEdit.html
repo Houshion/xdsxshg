@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>商品详情</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+
+<body>
+    <div class="goodsEdit addlist">
+        <div class="bfff pd-15 border-b flexJB c999 deviceMsg list">
+            <div class="msg lh32">
+                <div>设备编号：
+                    <span class="c000 macno"></span>
+                </div>
+                <div>设备地址：
+                    <span class="c000 address"></span>
+                </div>
+            </div>
+        </div>
+        <div class="flexJB pd-15 c999">
+            <div>商品明细</div>
+            <div class="btn btn1 edit">完成</div>
+        </div>
+        <div class="bfff editList pd-l-15 pd-r-15">
+
+        </div>
+    </div>
+    <!-- 遮罩层 确认框 -->
+    <div class="maskScan hide"></div>
+    <div id="del" class="hide">
+        <div class="content ta-center pd-40">
+            <div class="title mg-b-10">确认删除该商品？</div>
+        </div>
+        <div class="flex">
+            <div class="confirmBtn border-t pd-10 ta-center border-r wd-50" onclick="cancel()">取消</div>
+            <div class="cyellow confirmBtn border-t pd-10 ta-center fontb wd-50" onclick="confrimDel()">确定</div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    var delGoodsMsg;
+    $(function () {
+
+        var param = {
+            api_name: "getDeviceGoodsDeviceGoodsList",
+            macno: getParam().macno,
+            page: 1,
+            pagesize: 999
+        }
+        var data = [];
+        ajaxPost(param, "Wxsite/Device/api", function (res) {
+            if (res.code == 1) {
+                $(".macno").text(getParam().macno);
+                $(".address").text(res.data.address);
+                for (var i = 0; i < res.data.goods.length; i++) {
+                    $(".editList").append(
+                        '<div class="list border-b pd-t-15 pd-b-15 flexJB">' +
+                        '<div class="flexJS wd-90">' +
+                        '<div class="img wd-25">' +
+                        '<img src="' + res.data.goods[i].goods_img + '" alt="">' +
+                        '</div>' +
+                        '<div class="lh26 mg-l-15">' +
+                        '<div class="flex">' +
+                        '<div class="reduceBtn" onclick="changeInventory(1,this)">-</div>' +
+                        '<div class="num mg-l-10 mg-r-1">' +
+                        '<input type="number" readonly class="input" value="' + res.data.goods[i].inventory +
+                        '">' +
+                        '</div>' +
+                        '<div class="plusBtn" onclick="changeInventory(2,this)">+</div>' +
+                        '</div>' +
+                        '<div>货道：' + res.data.goods[i].aisle_num + '</div>' +
+                        '<div>' + getRowName(res.data.goods[i].row) + res.data.goods[i].line +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="lh32 wd-10">' +
+                        '<div class="mg-b-30">' +
+                        '<img src="../img/o_edit.png" class="editImg" data-aisle="' + res.data.goods[
+                            i].aisle_num +
+                        '" data-name="' + res.data.goods[i].goods_name + '" data-goods_id="' + res.data
+                        .goods[i]
+                        .goods_id + '" data-dg_id="' + res.data.goods[i].device_goods_id + '">' +
+                        '</div>' +
+                        '<div class="i_close" onclick="delGoods(' + res.data.goods[i].goods_id +
+                        ',' + res.data.goods[i].device_goods_id + ',this)"></div>' +
+                        '</div>' +
+                        '</div>'
+                    )
+                    data.push({
+                        goods_id: res.data.goods[i].goods_id,
+                        aisle_num: res.data.goods[i].aisle_num,
+                        inventory: res.data.goods[i].inventory
+                    })
+                }
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        });
+
+        $(".goodsEdit").on("click", ".editImg", function () {
+            var aisle = $(this).data("aisle");
+            var name = $(this).data("name");
+            var goodsId = $(this).data("goods_id");
+            var dg_id = $(this).data("dg_id");
+            var inventory = $(this).parents(".list").find(".input").val()
+            var goodsMsg = {
+                aisle: aisle,
+                name: name,
+                goodsId: goodsId,
+                dg_id: dg_id,
+                inventory: inventory
+            };
+            setItem("editGoodsMsg", JSON.stringify(goodsMsg))
+            // goTo("o_add_editGoods.html?macno=" + getParam().macno + "&aisle=" + aisle + "&name=" + name +
+            //     "&goodsId=" + goodsId);
+            goTo("o_add_editGoods.html?macno=" + getParam().macno);
+        })
+
+        $(".edit").on("click", function () {
+
+            // $(".input").each(function (index) {
+            //     data[index].inventory = $(this).val()
+            // })
+
+            // ajaxPost({
+            //     api_name: "ReplenishmentVerify",
+            //     macno: getParam().macno,
+            //     data: data
+            // }, "Wxsite/Device/api", function (res) {
+            //     dlctipbox.show(res.msg);
+            //     if (res.code == 1) {
+            //         setTimeout(() => {
+            location.href = "o_add_goodsDetail.html?macno=" + getParam().macno
+            //         }, 1500);
+            //     }
+            // });
+        })
+
+    })
+
+    function delGoods(goods_id, device_goods_id, obj) {
+        delGoodsMsg = {
+            param: {
+                api_name: "delGoods",
+                goods_id: goods_id,
+                device_goods_id: device_goods_id
+            },
+            obj: obj
+        }
+        $(".maskScan").fadeIn();
+        $("#del").fadeIn();
+    }
+
+    function confrimDel() {
+        $(delGoodsMsg.obj).parents(".list").remove();
+        ajaxPost(delGoodsMsg.param, "Wxsite/Device/api", function (res) {
+            cancel();
+            dlctipbox.show(res.msg);
+            if (res.code == 1) {
+                $(delGoodsMsg.obj).parents(".list").remove();
+            }
+        });
+    }
+
+    function cancel() {
+        $(".maskScan").fadeOut();
+        $("#del").fadeOut();
+    }
+
+    function changeInventory(type, obj) {
+        var siblings = $(obj).siblings(".num").children();
+        var num = parseInt(siblings.val());
+        var goods_id = $(obj).parents(".list").find(".editImg").data("goods_id");
+        var device_goods_id = $(obj).parents(".list").find(".editImg").data("dg_id");
+        switch (type) {
+            case 1:
+                if (num > 0) {
+                    num = num - 1
+                }
+                break;
+            case 2:
+                num = num + 1;
+                break;
+        }
+        var param = {
+            api_name: "UpdateGoodsInventory",
+            inventory: num,
+            goods_id: goods_id,
+            device_goods_id: device_goods_id
+        }
+        ajaxPost(param, "Wxsite/Device/api", function (res) {
+            if (res.code == 1) {
+                siblings.val(num)
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        });
+    }
+</script>

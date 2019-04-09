@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>优惠券</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+    <style>
+        html,
+        body,
+        .box {
+            height: 100%
+        }
+
+        .pd10-5 {
+            padding: 10% 5%
+        }
+
+        .coupon {
+            padding: 10% 0
+        }
+    </style>
+</head>
+
+<body>
+    <div id="coupon" class="pd-15">
+        <div class="couponList">
+            <!-- <div class="coupon flex pd10-5 mg-b-10">
+                <div class="wd-30 cyellow">￥
+                    <span class="font28">2.00</span>
+                </div>
+                <div class="wd-70">
+                    <div class="font18">通用优惠券</div>
+                    <div class="c999">到期时间：
+                        <span>2017-10-06</span>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+    <div class="box hide">
+        <div class="wd-50">
+            <img src="../img/o_noCoupon.png" class="mg-auto">
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    var param = {
+        api_name: 'userDiscount',
+        page: 1,
+        pagesize: 999,
+        type: 1
+    }
+    ajaxPost(param, "Wxsite/User/api", function (res) {
+        if (res.code == 1) {
+            if (res.data.length <= 0) {
+                $(".box").show();
+                return false;
+            }
+            for (var i = 0; i < res.data.length; i++) {
+                $(".couponList").append(
+                    '<div class="coupon flex ta-center mg-b-10" data-id="' + res.data[i].log_id + '">' +
+                    '<div class="wd-30 cyellow">￥<span class="font32">' + res.data[i].discount +
+                    '</span></div>' +
+                    '<div class="wd-70">' +
+                    '<div class="font18">通用优惠券</div>' +
+                    '<div class="c999">到期时间：<span>' + date('Y-m-d H:i', res.data[i].ptime) +
+                    '</span></div>' +
+                    '</div>' +
+                    '</div>'
+                )
+            }
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    })
+</script>

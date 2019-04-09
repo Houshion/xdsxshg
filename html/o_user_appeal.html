@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>售后申诉</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+    <style>
+        .UpImage img {
+            width: 100px;
+            height: 100px;
+            margin-right: 10px;
+        }
+        .inputImg {
+            opacity: 0;
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            margin-top: -100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="appeal">
+        <form id="repair_form" enctype="multipart/form-data" method="POST">
+            <div class="orderNum bfff pd-10">订单编号：
+                <span class="oid"></span>
+                <input name="api_name" value="userComplainSubmit" hidden />
+                <input class="order_id" name="order_id" value="" hidden />
+            </div>
+            <div class="mg-t-15 bfff pd-10 flexWrap flexJB">
+                <textarea name="content" id="appealContent" cols="30" rows="6" placeholder="请输入您的反馈问题，并留下联系方式，我们会尽快回复您！"></textarea>
+                <div class="flex flexWrap UpImage" id="UpImage">
+                    <div class="box">
+                        <img class="add" src="../img/plus.png" alt="">
+                        <input type="file" name="img1" class="file inputImg" accept="image/*" capture="camera" multiple onchange="uploadImg(this)"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div class="btn btn1 mg-t-40 submit">提交</div>
+        </form>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/jquery.form.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    $(function () {
+
+        $(".oid").text(getParam().oid);
+        $(".order_id").val(getParam().oid);
+
+        $(".submit").on("click", function () {
+
+            var content = $("#appealContent").val();
+            var imgs = $(".UpImage").children("img").attr("src"); //图片路径，多张用逗号（，）隔开
+            $('#repair_form').ajaxSubmit({
+                url: 'http://xdsxgzh.app.xiaozhuschool.com/Wxsite/User/api',
+                type: 'POST',
+                dataType: 'json',
+                success: function (res) {
+                    dlctipbox.show(res.msg)
+                    setTimeout(() => {
+                        back();
+                    }, 2000);
+                },
+                error: function (err) {
+                    dlctipbox.show(JSON.stringify(err))
+                }
+            })
+
+
+
+        });
+
+    });
+</script>

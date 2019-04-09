@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>新增商品</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+    <style>
+        .maskBox {
+            height: 60%;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="addGoods">
+        <div class="main bfff pd-l-15 pd-r-15">
+            <div class="name pd-t-15 pd-b-15 flexJB border-b">
+                <div class="flexJB wd-95">
+                    <div>商品</div>
+                    <div class="goodsName c999">请选择商品</div>
+                </div>
+                <div class="rArow"></div>
+            </div>
+            <div class="num pd-t-15 pd-b-15 flexJB border-b">
+                <div>库存</div>
+                <input type="text" class="input" placeholder="请输入上架商品库存">
+            </div>
+            <div class="way pd-t-15 pd-b-15 flexJB">
+                <div class="flexJB wd-95">
+                    <div>货道</div>
+                    <div class="wayNum c999">请选择货道</div>
+                </div>
+                <div class="rArow"></div>
+            </div>
+        </div>
+        <div class="pd-l-15 pd-r-15">
+            <div class="mg-t-40 btn btn1 confirmAdd">确认添加</div>
+        </div>
+    </div>
+    <!-- 遮罩层 -->
+    <div class="mask hide"></div>
+    <!-- 隐藏框 -->
+    <div class="wd-80 bfff hide maskBox radius10 pd-10" id="goods">
+        <!-- <div class="list flexJB border-t pd-b-10 pd-t-10">
+            <div class="listName">百事可乐</div>
+            <div class="img">
+                <img src="../img/o_uncheck.png" class="unpick" data-src="../img/o_check.png">
+            </div>
+        </div> -->
+    </div>
+    <div class="wd-80 bfff hide maskBox radius10 pd-10" id="way">
+        <!-- <div class="list flexJB border-t pd-b-10 pd-t-10">
+            <div class="listName">1101</div>
+            <div class="img">
+                <img src="../img/o_uncheck.png" class="pick" data-src="../img/o_check.png">
+            </div>
+        </div> -->
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    $(function () {
+
+        var DG_id, waynum, goodsId;
+
+        ajaxPost({
+            api_name: "getGoodsList",
+            page: 1,
+            pagesize: 999
+        }, "Wxsite/Device/api", function (res) {
+            if (res.code == 1) {
+                for (var i = 0; i < res.data.length; i++) {
+                    $("#goods").append(
+                        '<div class="list flexJB border-t pd-b-10 pd-t-10" data-goods_id="' + res.data[
+                            i].goods_id + '">' +
+                        '<div class="listName">' + res.data[i].title + '</div>' +
+                        '<div class="img">' +
+                        '<img src="../img/o_uncheck.png" class="unpick" data-src="../img/o_check.png">' +
+                        '</div>' +
+                        '</div>'
+                    )
+                }
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        });
+
+        ajaxPost({
+            api_name: "getDeviceAisle",
+            macno: getParam().macno,
+            page: 1,
+            pagesize: 999
+        }, "Wxsite/Device/api", function (res) {
+            if (res.code == 1) {
+                for (var i = 0; i < res.data.length; i++) {
+                    $("#way").append(
+                        '<div class="list flexJB border-t pd-b-10 pd-t-10" data-device_goods_id="' +
+                        res.data[i].device_goods_id + '">' +
+                        '<div class="listName">' + res.data[i].aisle_num + '</div>' +
+                        '<div class="img">' +
+                        '<img src="../img/o_uncheck.png" class="pick" data-src="../img/o_check.png">' +
+                        '</div>' +
+                        '</div>'
+                    )
+                }
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        });
+
+        $(".maskBox").on("click", ".list", function () {
+
+            var img = $(this).find("img");
+            var dsrc = img.data("src");
+            var asrc = img.attr("src");
+
+            $("img").attr("src", "../img/o_uncheck.png").data("src", "../img/o_check.png").removeClass(
+                "pick").addClass("unpick");
+
+            if (img.hasClass("unpick")) {
+                img.attr("src", dsrc).data("src", asrc).removeClass("unpick").addClass("pick");
+            }
+
+        })
+
+        $(".name").on("click", function () {
+            showModal($('#goods'))
+        })
+        $("#goods").on("click", ".list", function () {
+            var goodsname = $(this).find(".listName").text();
+            goodsId = $(this).data("goods_id")
+            $(".goodsName").text(goodsname);
+        });
+
+        $(".way").on("click", function () {
+            showModal($('#way'))
+        })
+        $("#way").on("click", ".list", function () {
+            waynum = $(this).find(".listName").text();
+            DG_id = $(this).data("device_goods_id");
+            $(".wayNum").text(waynum);
+        });
+
+        $(".confirmAdd").on("click", function () {
+            var data = [{
+                goods_id: goodsId,
+                aisle_num: waynum,
+                inventory: $(".input").val()
+            }];
+            var param = {
+                api_name: "ReplenishmentAdd",
+                macno: getParam().macno,
+                data: data,
+            }
+            // console.log(param)
+            ajaxPost(param, "Wxsite/Device/api", function (res) {
+                if (res.code == 1) {
+                    dlctipbox.show(res.msg);
+                    setTimeout(() => {
+                        history.go(-1);
+                    }, 1500);
+                } else {
+                    dlctipbox.show(res.msg);
+                }
+            });
+        })
+    })
+</script>

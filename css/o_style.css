@@ -1,0 +1,417 @@
+/*********** 背景颜色 ***********/
+.bfff {
+    background: #ffffff !important
+}
+
+.beee {
+    background: #eeeeee !important
+}
+
+.byellow {
+    background: #ffa250 !important;
+    color: #ffffff !important;
+}
+
+.bblue {
+    background: #55c7ef !important;
+    color: #ffffff !important;
+}
+
+.bred {
+    background: #ff6a6a !important;
+    color: #ffffff !important;
+}
+
+.bgreen {
+    background: #6ae3bf !important;
+    color: #ffffff !important;
+}
+
+/*********** 字体颜色 ***********/
+.cfff {
+    color: #ffffff !important
+}
+
+.c999 {
+    color: #999999 !important
+}
+
+.cyellow {
+    color: #ff9317 !important
+}
+
+.cblue {
+    color: #8cb5ff !important
+}
+
+.cred {
+    color: #ff6a6a !important
+}
+
+.cgreen {
+    color: #6ae3bf !important
+}
+
+.c000 {
+    color: #000000 !important
+}
+
+/*********** 按钮样式 ***********/
+.btn {
+    color: #ffffff;
+    padding: 15px;
+    border-radius: 30px;
+    text-align: center;
+}
+
+.btnBottom {
+    color: #ffffff;
+    padding: 10px 25px;
+}
+
+.btn1 {
+    background: linear-gradient(90deg, #ffb217 20%, #ff9317 90%);
+    color: #ffffff;
+}
+
+.btn2 {
+    background: linear-gradient(90deg, #0da2a4 20%, #41c4cc 90%);
+    color: #ffffff;
+}
+
+.btn3 {
+    background: linear-gradient(90deg, #41c4cc 20%, #6e8bd9 90%);
+    color: #ffffff;
+}
+
+/*********** 间距样式 ***********/
+.mgtb-10 {
+    margin: 10px 0
+}
+
+.pflr-10 {
+    padding: 0 10px
+}
+
+.pdl5r10 {
+    padding: 5px 10px
+}
+
+/*********** 输 入 框 ***********/
+.input {
+    border: none;
+    background: #eeeeee;
+    padding: 10px
+}
+
+/*********** 遮 罩 层 ***********/
+.mask {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.maskScan {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.maskBox {
+    position: fixed;
+    margin: auto;
+    left: 5%;
+    top: 20%;
+    right: 5%
+}
+
+/*********** icon样式 ***********/
+.detail .icon,
+.confirm .icon,
+.recoverDetail .icon,
+.orderdetail .icon {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+}
+
+/** o_user_index.html **/
+.bgImg {
+    height: 250px;
+}
+
+.bgImg .bg {
+    background-size: 100% 100%;
+    width: 100%;
+    height: 250px;
+    position: absolute;
+    top: 0;
+}
+
+.bgImg img {
+    border-radius: 50%;
+    line-height: 200px;
+    z-index: 99;
+}
+
+.userCenter .icon {
+    width: 25px;
+    height: 25px;
+}
+
+/** o_user_wallet.html **/
+.wallet .inner_box {
+    position: absolute;
+    width: 100%;
+    top: 50px;
+    text-align: center;
+}
+
+.wallet .inner_box .btnRecharge {
+    padding: 5px 20px;
+    background: #ffffff;
+    border-radius: 30px;
+    color: #ffad17;
+    width: 100px;
+    margin: 20px auto;
+}
+
+.wallet .icon {
+    width: 25px;
+    height: 25px;
+}
+
+.wallet .title img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 220px
+}
+
+.wallet .title {
+    height: 210px
+}
+
+/** o_user_recharge.html **/
+.recharge .chargeList div {
+    padding: 30px 0;
+    background: #eeeeee;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.recharge .chargeList .pick {
+    background: #ffad17;
+    color: #ffffff
+}
+
+/** o_user_coupon.html **/
+.coupon {
+    background: url("../img/o_coupon.png") no-repeat;
+    background-size: 100% 100%;
+}
+
+.pd10 {
+    padding: 10%
+}
+
+/** o_user_appeal.html **/
+#appealContent {
+    border: none;
+    width: 100%
+}
+
+.appeal .plusBtn {
+    border: 1px #dddddd dashed;
+    font-size: 60px;
+    border-radius: 10px;
+    width: 100px;
+    height: 100px;
+    color: #dddddd
+}
+
+/** o_user_order.html **/
+.orderList .list {
+    padding: 10px 15px;
+    background: #ffffff;
+    margin-bottom: 10px;
+    border-radius: 5px
+}
+
+.pdtb-15 {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+/** o_user_orderDetail.html **/
+.orderDetail .main .appealBtn {
+    border-radius: 10px;
+    padding: 5px 15px;
+}
+
+/** o_cooperation.html **/
+.cooperation .boxes {
+    margin: 20px auto;
+}
+
+/** o_add_login.html **/
+.login .name,
+.login .pass {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #dddddd;
+    margin: 15px 0;
+}
+
+.login .input {
+    width: 90%;
+    background: #ffffff
+}
+
+/** o_add_index.html **/
+.addIndex .divice {
+    position: absolute;
+    top: 30px;
+    color: #ffffff
+}
+
+/** o_roadList.html/o_list.html **/
+.addlist .state {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    line-height: 50px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.addlist .state1 {
+    background: #f0f5ff;
+    color: #669cff;
+}
+
+.addlist .state2 {
+    background: #fff0f0;
+    color: #ff6666;
+}
+
+.addlist .state3 {
+    background: #fff3e5;
+    color: #ffb765;
+}
+
+/** o_add_goodsDetail.html **/
+.goodsDetail .btn,
+.goodsEdit .btn {
+    padding: 5px 10px;
+    border-radius: 5px
+}
+
+/** o_add_goodsDetail.html **/
+.fixed_bottom .addbtn {
+    border: 1px solid #ff9317;
+    color: #ff9317;
+    padding: 15px
+}
+
+/** o_add_goodsEdit.html **/
+.goodsEdit .reduceBtn,
+.goodsEdit .plusBtn {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border: 1px solid #cccccc;
+    color: #cccccc;
+    border-radius: 50%
+}
+
+.goodsEdit .input {
+    background: #ffffff;
+    width: 30px;
+    text-align: center;
+}
+
+.goodsEdit .editImg {
+    width: 15px;
+    height: 15px;
+}
+
+/** o_add_editGoods.html **/
+.maskBox .img img {
+    width: 20px;
+    height: 20px;
+}
+
+#goods .list:nth-child(1),
+#way .list:nth-child(1) {
+    border-top: none !important
+}
+
+/** o_add_goodsAddmore.html **/
+.goodsEdit .fixed_bottom .btn {
+    border-radius: 0;
+    padding: 15px
+}
+
+/** o_add_goodsAdd.html **/
+.addGoods .input {
+    text-align: right;
+    background: #ffffff
+}
+
+/** o_roadTest.html **/
+.roadTest .checkAll .labelName {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+}
+
+.roadTest .testAll .labelName {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+}
+
+.roadList .list .roadName {
+    height: 45px;
+    width: 45px;
+    background: #ddd;
+}
+
+.roadTest .roadList {
+    margin-bottom: 50px;
+}
+
+.roadTest .roadList .checkImg {
+    width: 25px;
+    height: 25px;
+}
+
+.roadTest .testBtn {
+    height: 50px;
+    line-height: 50px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+/** o_roadScan.html **/
+#roadScan,
+#del {
+    width: 80%;
+    margin: auto;
+    background: #ffffff;
+    border-radius: 10px;
+    position: fixed;
+    left: 10%;
+    top: 30%;
+}

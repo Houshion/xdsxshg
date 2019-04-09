@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>货道列表</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+
+<body style="display:none">
+    <div id="roadList">
+        <div class="list-wrap">
+            <ul class="roadlist addlist">
+            </ul>
+        </div>
+    </div>
+    <!-- <div class="wd-100 empty-pane" style="display:none">
+        <div class="flex flexAC">
+            <img src="../img/icon_38.png" class="empty-icon">
+            <span class="f14 c9 mt4">货道</span>
+        </div>
+    </div> -->
+</body>
+
+</html>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../js/dropload.min.js"></script>
+<script type="text/javascript" src="../js/o_base.js"></script>
+<script>
+    var page = 0,
+        pagesize = 999,
+        str = '';
+    var param = {
+        api_name: "getDeviceList",
+        page: page,
+        pagesize: pagesize
+    }
+    $('.list-wrap').dropload({
+        scrollArea: window,
+        loadDownFn: function (me) {
+            $('.dropload-down').remove()
+            param.page++
+            ajaxPost(param, "Wxsite/Device/api", function (res) {
+                if (res.code == 1) {
+                    var data = res.data;
+                    // if (page == 1 && res.data.length == 0) {
+                    //     $('.empty-pane').show()
+                    // }
+                    if (res.data.length >= 1) {
+                        for (var i = 0; i < data.length; i++) {
+                            var status = (data[i].status == 1) ? "在线" : (data[i].status == 2) ?
+                                "故障" :
+                                "离线";
+                            var statusClass = (data[i].status == 1) ? "state1" : (data[i].status ==
+                                    2) ?
+                                "state2" : "state3";
+                            $(".roadlist").append(
+                                "<div class='bfff pd-15 border-b flexJB list' onclick='roadTest(" +
+                                data[i].device_id + "," + JSON.stringify(data[i]) + ")'>" +
+                                "<div class='msg lh32'>" +
+                                "<div>设备编号：<span class='c000'>" + data[i].macno +
+                                "</span></div>" +
+                                "<div>设备地址：<span class='c000'>" + data[i].address +
+                                "</span></div>" +
+                                "</div>" +
+                                "</div>"
+                            )
+                        }
+                        $("body").show()
+                    } else {
+                        me.lock()
+                        me.noData()
+                    }
+                    me.resetload()
+                }
+            })
+        }
+    })
+
+    function roadTest(id, data) {
+        // setItem("roadTestDevice", JSON.stringify(data))
+        goTo("o_roadTest.html", "id=" + id)
+    }
+</script>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>扫一扫</title>
+    <style>
+    img {
+        margin: 30% auto;
+        display: block;
+        width: 64%;
+    }
+    </style>
+</head>
+
+<body>
+    <img src="../img/loading.gif" />
+</body>
+
+</html>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../js/dlc.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script language="javascript">
+$.ajax({
+    type: "POST",
+    url: dlcUrl() + "Wxsite/MgyOrder/api",
+    dataType: 'json',
+    data: { api_name: 'getTicket' },
+    success: function(res) {
+        if (res.code == 1) {
+            var timestamp = (new Date().getTime() / 1000).toFixed(0);
+            var nonceStr = Math.random().toString(36).substr(2);
+            var ticket = wx_js(res.data.ticket, timestamp, nonceStr);
+            wx.config({
+                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端//alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                appId: 'wx325c92d9ef132efc', // 必填，公众号的唯一标识
+                timestamp: timestamp, // 必填，生成签名的时间戳
+                nonceStr: nonceStr, // 必填，生成签名的随机串
+                signature: ticket, // 必填，签名，见附录1
+                jsApiList: ['checkJsApi',
+                    'onMenuShareTimeline',
+                    'onMenuShareAppMessage',
+                    'onMenuShareQQ',
+                    'onMenuShareWeibo',
+                    'hideMenuItems',
+                    'showMenuItems',
+                    'hideAllNonBaseMenuItem',
+                    'showAllNonBaseMenuItem',
+                    'translateVoice',
+                    'startRecord',
+                    'stopRecord',
+                    'onRecordEnd',
+                    'playVoice',
+                    'pauseVoice',
+                    'stopVoice',
+                    'uploadVoice',
+                    'downloadVoice',
+                    'chooseImage',
+                    'previewImage',
+                    'uploadImage',
+                    'downloadImage',
+                    'getNetworkType',
+                    'openLocation',
+                    'getLocation',
+                    'hideOptionMenu',
+                    'showOptionMenu',
+                    'closeWindow',
+                    'scanQRCode',
+                    'chooseWXPay',
+                    'openProductSpecificView',
+                    'addCard',
+                    'chooseCard',
+                    'openCard'
+                ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+            });
+            wx.ready(function() {
+                wx.scanQRCode({
+                    needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+                    scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+                    success: function(res) {
+                        var macno = res.resultStr.split('=')[1];
+                        location.href = "y_shopList.html?macno="+macno+'&scan=1'
+                        // location.href = "y_shopList.html?macno="+macno+"&scan=1;
+                    },
+                    error: function(err) {
+                        dlctipbox.show(err);
+                    }
+                });
+            })
+        } else {
+            console.log(res.msg);
+        }
+
+    },
+    error: function(res) {
+        alert(JSON.stringify(res))
+    }
+})
+
+function wx_js(signature, timestamp, nonceStr) {
+    var e = decodeURIComponent('jsapi_ticket=' + signature + '&noncestr=' + nonceStr + '&timestamp=' + timestamp + '&url=' + location.href.split("#")[0]),
+        s = new jsSHA(e, "TEXT"),
+        signature = s.getHash("SHA-1", "HEX");
+    return signature;
+}
+</script>

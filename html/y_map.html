@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>附近网点</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+        window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+</head>
+<style type="text/css">
+    #container {
+        height: calc(100% + 20px);
+        position: absolute !important;
+        width: 100%;
+    }
+
+    #tool {
+        width: 100%;
+        position: absolute;
+        height: 70px;
+        bottom: 4%;
+        left: 0;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    .getlocal {
+        position: absolute;
+        top: -50%;
+        right: .24rem;
+    }
+
+    .smnoprint {
+        display: none;
+    }
+
+    img.csssprite {
+        width: .2rem;
+    }
+
+    .search {
+        width: 100%;
+        /*display: none;*/
+        position: absolute;
+        height: 1rem;
+        top: 0;
+        left: 0;
+        /*display: flex!important;*/
+        justify-content: center;
+        align-items: center;
+    }
+
+    .inner_box {
+        width: 80%;
+        height: 90%;
+        background: #f1f1f1;
+        border-radius: 50px;
+    }
+
+    input {
+        background: none;
+    }
+
+    .mBox {
+        position: absolute;
+        left: 0.35rem;
+        top: .2rem;
+        background: #fff;
+        width: 6.8rem;
+        display: none;
+        border-radius: .1rem;
+        box-shadow: 0 0 10px rbga(0, 0, 0, .5)
+    }
+
+    .loc2 {
+        padding: .2rem 0;
+        border-top: 1px solid #e8e8e8;
+    }
+
+    .qhm {
+        position: absolute;
+        top: 3.57rem;
+        left: .75rem;
+        background: #fff;
+        width: 6.4rem;
+        height: 3.74rem;
+    }
+
+    .input_box {
+        width: 5.4rem;
+        height: 1rem;
+        border-radius: 50px;
+        background: #f1f1f1;
+        margin: .5rem auto;
+    }
+</style>
+
+<body>
+    <div class="bigBox">
+        <ul class="container">
+            <div id="container"></div>
+            <!-- 导航地址弹出框 -->
+            <div class="mBox">
+                <!--   <li class="location flex_a flex-sb p30"> <ul> <h3 class="name">编号：2548</h3> <p class="mt10 font14 flex_a col9"> <span class="address">东莞市南城区周溪高盛科技大厦</span> </p> </ul> <img src="../img/navigation.png" style="width: 0.6rem;"> </li> <li class="flex-ar loc2"> <a class="flex"> <span><img src="../img/1.png" style="width: .4rem;height: .4rem" /></span> <span class="ml20">查看商品</span> </a> <a class="flex pickUp"> <span><img src="../img/2.png" style="width: .4rem;height: .4rem" /></span> <span class="ml20">我要取货</span> </a> </li> -->
+            </div>
+            <!-- 扫一扫 &&列表-->
+            <div id="tool">
+                <p class="getlocal"><img src="../img/location.png" style="width: .8rem;"></p>
+            </div>
+            <div class="search bw flex">
+                <div class="inner_box flex">
+                    <img src="../img/search.png" style='width: .28rem;height: .28rem;margin-right: .2rem;' />
+                    <input type="text" name="search" placeholder="输入搜索地址" style="width: 1.8rem;" id="search" />
+                </div>
+            </div>
+            <!-- 取货码 -->
+            <div class="qhm" style="z-index: 5;display: none;" />
+            <p class="tac mt30">取货码</p>
+            <div class="input_box flex">
+                <input type="text" name="code" class="take_code" placeholder="请输入您的取货码" />
+            </div>
+            <div class="color1 tac bdt p20 qh_btn">确定</div>
+    </div>
+    </ul>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/o_base.js" type="text/javascript" charset="utf-8"></script>
+<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=4LYBZ-CHBRG-TIMQ3-I3N32-2LJ4K-FZBTY&referer=WXocean"></script>
+<script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+    $('#search').val(UrlSearch('search'));
+    // 我要取货
+    $('.mBox').on('click', '.pickUp', function () {
+        showMask();
+        $('.qhm').show();
+    });
+
+    // 取货成功
+    $('.qh_btn').on('click', function () {
+        var take_code = $('.take_code').val();
+        if (isNull(take_code)) {
+            dlctipbox.show('请输入信息')
+        } else {
+            dlc_request('Wxsite/MgyOrder/api', {
+                api_name: 'takeGoods',
+                take_code: take_code
+            }, function (res) {
+                console.log(res);
+                if (res.code == 1) {
+                    setTimeout(function () {
+                        hideMask();
+                        dlctipbox.show(res.msg);
+                        $('.qhm').hide();
+                    }, 2000)
+                } else {
+                    dlctipbox.show(res.msg);
+                    $('.qhm').hide();
+                    hideMask();
+                }
+            })
+        }
+    })
+    // 获取设备
+    function getDeviceMsg(addr, lat, lng) {
+        dlc_request('Wxsite/MgyOrder/api', {
+            api_name: 'nearby',
+            lat: lat,
+            lng: lng,
+            address: addr
+        }, function (res) {
+            var a = res.data[0]
+            $('.search').hide();
+            $('.mBox').html('<li class="location flex_a flex-sb p30" data-lat=' + a.lat +
+                ' data-lng=' + a.lng + ' data-device_id=' + a.device_id + ' data-macno=' +
+                a.macno + ' data-address=' + a.address + '> <ul> <h3 class="name">编号：' + a.macno +
+                '</h3> <p class="mt10 font14 flex_a col9"> <span class="address">' + a.address +
+                '</span> </p> </ul> <img src="../img/navigation.png" style="width: 0.6rem;"> </li> <li class="flex-ar loc2"> <a class="flex" href="y_shopList.html?id=' +
+                a.device_id + '&macno=' + a.macno +
+                '" id="s_goods"> <span><img src="../img/1.png" style="width: .4rem;height: .4rem" /></span> <span><span class="ml20">查看商品</span></span </a> <a class="flex pickUp"> <span><img src="../img/2.png" style="width: .4rem;height: .4rem" /></span> <span class="ml20">我要取货</span> </a> </li>'
+            ).show();
+        })
+    }
+
+    // 地图搜索
+    $("#search").on("click", function () {
+        location.href = 'y_search.html?search=' + $(this).val();
+    })
+    // $('#search').keydown(function(e) {
+    //     if (e.keyCode == 13) {
+    //         location.href = 'y_search.html?search=' + $(this).val();
+    //     }
+    // })
+
+    var geolocation = new qq.maps.Geolocation("N6RBZ-AJN35-AACI2-Q2ICF-HYV6O-JRBBZ", "myapp");
+    var positionNum = 0;
+    var onOff = 0;
+    var options = {
+        timeout: 2000
+    };
+
+    function showPosition(position) {
+        positionNum++;
+        position;
+        lat = position.lat;
+        lng = position.lng;
+        console.log('具体地址：' + position.addr + '经度：' + lat + '纬度' + lng);
+        var center = new qq.maps.LatLng(lat, lng);
+        var map = new qq.maps.Map(document.getElementById('container'), {
+            center: center,
+            zoom: 13,
+            //              zoomControl: false,
+            draggable: true, //手势控制, 用来设置地图是否能够鼠标拖拽，默认值为“可以”；
+            scrollwheel: true, //用来配置地图是否能够通过鼠标滚轮操作进行放大，默认值为“可以”；
+            disableDoubleClickZoom: false // 用来配置地图是否可以通过鼠标双击进行放大，默认值为“可以”。
+        });
+
+        //创建marker
+        var marker = new qq.maps.Marker({
+            position: center,
+            map: map
+        });
+
+        //自定义标注图标
+        var anchor = new qq.maps.Point(55, 55),
+            size = new qq.maps.Size(110, 110),
+            origin = new qq.maps.Point(0, 0),
+            markerIcon = new qq.maps.MarkerImage(
+                "../img/ic_location.png",
+                size,
+                origin,
+                anchor
+            );
+        marker.setIcon(markerIcon);
+
+        // 若有搜索，则直接返回搜索结果
+        if (UrlSearch('search')) {
+            console.log(UrlSearch('search'))
+            getDeviceMsg(UrlSearch('search'), lat, lng)
+        }
+        //获取标记的点击事件
+
+        dlc_request('Wxsite/MgyOrder/api', {
+            api_name: 'nearby',
+            lat: lat,
+            lng: lng
+        }, function (res) {
+            console.log(res)
+            for (var i in res.data) {
+                // console.log(res.data[i].address)
+                var logo1 = new qq.maps.LatLng(res.data[i].lat, res.data[i].lng);
+                //创建marker
+                var logo = new qq.maps.Marker({
+                    position: logo1,
+                    map: map
+                });
+                //自定义标注图标
+                var anchor = new qq.maps.Point(48, 55.5),
+                    size = new qq.maps.Size(96, 101),
+                    origin = new qq.maps.Point(0, 0),
+                    markerIcon = new qq.maps.MarkerImage(
+                        "../img/y_logo.png",
+                        size,
+                        origin,
+                        anchor
+                    );
+                logo.setIcon(markerIcon);
+
+                //设置属性
+                logo.lat = res.data[i].lat;
+                logo.lng = res.data[i].lng;
+                logo.address = res.data[i].address;
+                logo.device_id = res.data[i].device_id;
+                logo.macno = res.data[i].macno;
+                console.log(res.data[i].address)
+                console.log(logo)
+
+                //获取标记的点击事件
+                qq.maps.event.addListener(logo, 'click', function (e) {
+                    var a = e.target;
+                    $('.search').hide();
+                    $('.mBox').html(
+                        '<li class="location flex_a flex-sb p30" data-lat=' + a.lat + ' data-lng=' +
+                        a.lng + ' data-device_id=' + a.device_id + ' data-macno=' + a.macno +
+                        ' data-address=' + a.address + '>' +
+                        '<ul>' +
+                        '<h3 class="name">编号：' + a.macno + '</h3>' +
+                        '<p class="mt10 font14 flex_a col9">' +
+                        '<span class="address">' + a.address + '</span>' +
+                        '</p>' +
+                        '</ul>' +
+                        '<img src="../img/navigation.png" style="width: 0.6rem;">' +
+                        '</li>' +
+                        '<li class="flex-ar loc2">' +
+                        '<a class="flex" href="y_shopList.html?id=' + a.device_id + '&macno=' + a.macno +
+                        '" id="s_goods">' +
+                        '<span><img src="../img/1.png" style="width: .4rem;height: .4rem" /></span>' +
+                        '<span><span class="ml20">查看商品</span></span>' +
+                        '</a>' +
+                        '<a class="flex pickUp">' +
+                        '<span><img src="../img/2.png" style="width: .4rem;height: .4rem" /></span>' +
+                        '<span class="ml20">我要取货</span>' +
+                        '</a>' +
+                        '</li>'
+                    ).show();
+
+                    console.log(a) //获取属性
+                });
+
+            }
+        })
+
+
+
+        //获取当前位置
+        $('.getlocal').click(function () {
+            dlctipbox.show('您当前的位置是' + position.addr);
+        })
+
+    }
+
+    function showErr() {
+        positionNum++;
+        console.log('定位失败！');
+        setInterval(function () {
+            geolocation.getLocation(showPosition, showErr, options);
+        }, 5000)
+    };
+    geolocation.getLocation(showPosition, showErr, options);
+</script>
+<script language="javascript">
+    $.ajax({
+        type: "POST",
+        url: dlcUrl() + "Wxsite/MgyOrder/api",
+        dataType: 'json',
+        data: {
+            api_name: 'getTicket'
+        },
+        success: function (data) {
+            console.log(data);
+            // dlctipbox.clear();
+            if (data.code == 1) {
+                var ticket = data.data.ticket;
+                var timestamp = (new Date().getTime() / 1000).toFixed(0);
+                var nonceStr = Math.random().toString(36).substr(2);
+                var tickets = wx_js(data.data.ticket, timestamp, nonceStr);
+                localStorage.setItem("ticket", ticket)
+                wx.config({
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端//alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: 'wx325c92d9ef132efc', // 必填，公众号的唯一标识
+                    timestamp: timestamp, // 必填，生成签名的时间戳
+                    nonceStr: nonceStr, // 必填，生成签名的随机串
+                    signature: tickets, // 必填，签名，见附录1
+                    jsApiList: ['checkJsApi',
+                        'onMenuShareTimeline',
+                        'onMenuShareAppMessage',
+                        'onMenuShareQQ',
+                        'onMenuShareWeibo',
+                        'hideMenuItems',
+                        'showMenuItems',
+                        'hideAllNonBaseMenuItem',
+                        'showAllNonBaseMenuItem',
+                        'translateVoice',
+                        'startRecord',
+                        'stopRecord',
+                        'onRecordEnd',
+                        'playVoice',
+                        'pauseVoice',
+                        'stopVoice',
+                        'uploadVoice',
+                        'downloadVoice',
+                        'chooseImage',
+                        'previewImage',
+                        'uploadImage',
+                        'downloadImage',
+                        'getNetworkType',
+                        'openLocation',
+                        'getLocation',
+                        'hideOptionMenu',
+                        'showOptionMenu',
+                        'closeWindow',
+                        'scanQRCode',
+                        'chooseWXPay',
+                        'openProductSpecificView',
+                        'addCard',
+                        'chooseCard',
+                        'openCard'
+                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                });
+
+                if (isWeiXin()) {
+                    wx.ready(function () {
+                        $('.mBox').on('click', '.location', function () {
+                            // console.log(111);
+                            var lat = $(this).data('lat');
+                            var lng = $(this).data('lng');
+                            var address = $(this).data('address');
+                            var name = $(this).data('address');
+                            console.log(lat + ',' + lng + ',' + address);
+                            wx.openLocation({
+                                latitude: lat,
+                                longitude: lng,
+                                name: name,
+                                address: address,
+                                scale: 14,
+                                infoUrl: '',
+                                //成功打印信息
+                                success: function (res) {
+                                    console.log(res)
+                                },
+                                //失败打印信息
+                                fail: function (err) {
+                                    console.log(err)
+                                },
+                            });
+                        })
+                    });
+
+                }
+            }
+        }
+    });
+    console.log(localStorage.getItem("ticket"));
+
+
+    function wx_js(signature, timestamp, nonceStr) {
+        var e = decodeURIComponent('jsapi_ticket=' + signature + '&noncestr=' + nonceStr + '&timestamp=' + timestamp +
+                '&url=' + location.href.split("#")[0]),
+            s = new jsSHA(e, "TEXT"),
+            signature = s.getHash("SHA-1", "HEX");
+        return signature;
+    }
+    //alert(wx_js())
+</script>

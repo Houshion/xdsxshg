@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>货道测试</title>
+    <link rel="stylesheet" href="../css/common.css" />
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+
+<body>
+    <div class="roadTest">
+        <div class="bfff pd-15 border-b flexJB c999">
+            <div class="msg lh32">
+                <div>设备编号：
+                    <span class="c000 macno"></span>
+                </div>
+                <div>设备地址：
+                    <span class="c000 address"></span>
+                </div>
+            </div>
+        </div>
+        <div class="c999 pd-10 flex flexJB">
+            <div>货道列表</div>
+            <div class="checkAll hide">
+                <label for="checkAll" onchange="checkAll()">
+                    <div class="labelName font12 box byellow">全选</div>
+                    <input type="checkbox" name="checkAll" id="checkAll" hidden>
+                </label>
+            </div>
+            <div class="testAll">
+                <label for="testAll" onchange="testAll()">
+                    <div class="labelName font12 box byellow">全测</div>
+                    <input type="checkbox" name="testAll" id="testAll" hidden>
+                </label>
+            </div>
+        </div>
+        <div class="roadList bfff list-wrap">
+            <!-- <div class="list border-b pd-10 flex flexJB">
+                <div class="roadName radius5 box">A02</div>
+                <div class="check">
+                    <div class="img">
+                        <img src="../img/o_uncheck.png" class="checkImg">
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        <div class="btn1 testBtn ta-center" data-status="1">一键测试</div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../js/dropload.min.js"></script>
+<script type="text/javascript" src="../js/dlc.js"></script>
+<script type="text/javascript" src="../js/o_base.js"></script>
+<script>
+    // var deviceData = JSON.parse(getItem("roadTestDevice"));
+    // $(".macno").text(deviceData.macno);
+    // $(".address").text(deviceData.address);
+    var aisle_list = [];
+    $(".roadList").on("click", ".list", function () {
+        var img = $(this).find(".checkImg");
+        if (img.hasClass("pick")) {
+            img.attr("src", "../img/o_uncheck.png").removeClass("pick");
+        } else {
+            img.attr("src", "../img/o_check.png").addClass("pick");
+        }
+    });
+    // 全选
+    function checkAll() {
+        var hasCheck = 0,
+            goodsNum = 0;
+        $(".checkImg").each(function (index) {
+            goodsNum++;
+            if ($(this).hasClass("pick")) {
+                hasCheck++;
+            }
+        });
+        if (hasCheck == goodsNum) {
+            $(".checkImg").attr("src", "../img/o_uncheck.png").removeClass("pick");
+        } else {
+            $(".checkImg").attr("src", "../img/o_check.png").addClass("pick");
+        }
+    }
+    // 全测
+    function testAll() {
+        aisleNumStr = "";
+        ajaxPost({
+            api_name: "deviceAisleTest",
+            macno: $(".macno").text(),
+        }, "Wxsite/Device/api", (res) => {
+            dlctipbox.show(res.msg);
+            if (res.code == 1) {
+                aisle_list.forEach(item => {
+                    aisleNumStr += item.aisle_num + ",";
+                })
+                intervalAisleScanData = setInterval(() => {
+                    roadTest(res.data.serial)
+                }, 5000);
+            }
+        });
+    }
+    // 初始化数据
+    var page = 0,
+        pagesize = 100,
+        str = '';
+    $('.list-wrap').dropload({
+        scrollArea: window,
+        loadDownFn: function (me) {
+            $('.dropload-down').remove()
+            page++
+            ajaxPost({
+                api_name: "deviceGoodsTestList",
+                device_id: getParam().id,
+                page: page,
+                pagesize: pagesize,
+            }, "Wxsite/Device/api", function (res) {
+                $(".macno").text(res.data.device_info.macno);
+                $(".address").text(res.data.device_info.address);
+                if (res.data.aisle_list.length >= 1) {
+                    res.data.aisle_list.forEach(item => {
+                        str +=
+                            '<div class="list border-b pd-10 flex flexJB">' +
+                            '<div class="roadName radius5 box">' + getRowName(item.row) +
+                            item.line +
+                            '</div>' +
+                            '<div class="check">' +
+                            '<div class="img">' +
+                            '<img src="../img/o_uncheck.png" class="checkImg" data-num=' +
+                            item.aisle_num + ' data-goods_id=' +
+                            item.device_goods_id + '>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+
+                    });
+                    aisle_list = res.data.aisle_list;
+                    $(".list-wrap").html(str);
+                } else {
+                    me.lock()
+                    me.noData()
+                }
+                me.resetload()
+            });
+        }
+    })
+    var aisleNumStr = ""; //需要测试的货道号
+    // 测试
+    var intervalAisleScanData;
+    $('.testBtn').on("click", function (res) {
+        aisleNumStr = "";
+        var hasCheck = 0,
+            goodsNum = 0,
+            goodsId = "";
+        var param = {
+            api_name: "deviceAisleTest",
+            macno: $(".macno").text(),
+        }
+        $(".checkImg").each(function (index) {
+            goodsNum++;
+            if ($(this).hasClass("pick")) {
+                hasCheck++;
+                goodsId += $(this).data("goods_id") + ",";
+                aisleNumStr += $(this).data("num") + ",";
+            }
+        });
+        if (hasCheck != goodsNum) {
+            param.device_goods_id = goodsId.substring(0, goodsId.length - 1);
+        }
+        if (param.device_goods_id == "") return dlctipbox.show("请选择货道测试");
+        // console.log(param);
+        ajaxPost(param, "Wxsite/Device/api", (res) => {
+            dlctipbox.show(res.msg);
+            if (res.code == 1) {
+                loadingShow()
+                $(".mask").show();
+                intervalAisleScanData = setInterval(() => {
+                    roadTest(res.data.serial)
+                }, 5000);
+            }
+        });
+    });
+
+    function roadTest(serial) {
+        ajaxPost({
+            api_name: "getAisleScanData",
+            type: 1,
+            serial: serial
+        }, "Wxsite/Device/api", (res) => {
+            if (res.code != 8) {
+                clearInterval(intervalAisleScanData);
+                // if (res.code == 0) {
+                //     dlctipbox.show(res.msg);
+                // } else {
+                //     res.data.forEach(item1 => {
+                //         aisle_list.forEach(item => {
+                //             if (item.aisle_num.indexOf(item1.aisle_num) != -1) {
+                //                 item.outgoods_result = item1.outgoods_result
+                //             }
+                //         });
+                //     });
+                //     console.log(aisle_list)
+                //     var str = "";
+                //     aisle_list.forEach(item => {
+                //         if (item.outgoods_result == 0) {
+                //             var status = '<div style="color:#00ff00">货道正常</div>'
+                //         } else {
+                //             var status = '<div style="color:#ff0000">货道异常</div>'
+                //         }
+                handle(res.data);
+                //     });
+                // }
+            }
+        });
+    }
+
+    function handle(data) {
+        var str = "";
+        var is_abnormal = 0; //是否有异常;
+        if (data.length > 0) {
+            is_abnormal = 1;
+        }
+        aisle_list.forEach(item => { //遍历全部通道号
+            var status = "";
+            if (aisleNumStr.indexOf(item.aisle_num) >= 0) { //判断该通道号是否为用户选择的通道号，主要为了显示【正常&异常】状态
+                status = '<div style="color:#00ff00">货道正常</div>';
+                if (is_abnormal) { //有异常的通道
+                    data.forEach(itemA => {
+                        if (itemA.aisle_num == item.aisle_num) {
+                            status = '<div style="color:#ff0000">货道异常</div>';
+                        }
+                    })
+                }
+            }
+            str +=
+                '<div class="list border-b pd-10 flex flexJB">' +
+                '<div class="roadName radius5 box">' + getRowName(item.row) +
+                item.line +
+                '</div>' +
+                status +
+                '<div class="check">' +
+                '<div class="img">' +
+                '<img src="../img/o_uncheck.png" class="checkImg" data-num=' + item.aisle_num +
+                ' data-goods_id=' +
+                item.device_goods_id + '>' +
+                '</div>' +
+                '</div>' +
+                '</div>'
+        });
+        $(".list-wrap").html(str)
+        dlctipbox.show("测试完成");
+        loadingHide();
+    }
+</script>

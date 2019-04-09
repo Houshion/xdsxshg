@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>订单详情</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+
+<body>
+    <div class="orderDetail pd-10">
+        <div class="pickNum bfff pd-15 mg-b-10 radius10 hide">
+            <div class="flexJS">
+                <div class="wd-5 mg-r-10">
+                    <img src="../img/o_pickCode.png">
+                </div>
+                <div>
+                    取货码：
+                    <span class="code">89757</span>
+                </div>
+            </div>
+        </div>
+        <div class="title bfff pd-15 mg-b-10 radius10">
+            <div>编号：
+                <span class="macno">89757</span>
+            </div>
+            <div class="c999 deviceAddress">东莞市南城区周溪高盛科技大厦303</div>
+        </div>
+        <div class="main bfff pd-15 mg-b-10 radius10">
+            <div class="flexJB">
+                <div>
+                    <div class="c999">
+                        订单编号：
+                        <span class="c000 oid">15646516</span>
+                    </div>
+                    <div class="c999">
+                        订单状态：
+                        <span class="c000 orderType">已完成</span>
+                    </div>
+                    <div class="c999">
+                        支付时间：
+                        <span class="c000 pay_time">2018-08-08 08:08</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="btn btn1 appealBtn">售后申诉</div>
+                </div>
+            </div>
+            <div class="goodsList">
+                <!-- <div class="flex pdtb-15 border-t mg-t-10">
+                    <div class="wd-35">
+                        <img src="../img/o_colo.png">
+                    </div>
+                    <div class="wd-60 pd-20">
+                        <div class="mg-b-15">百事可乐</div>
+                        <div class="c999">￥12.00/瓶</div>
+                    </div>
+                    <div class="wd-5">x5</div>
+                </div> -->
+            </div>
+
+            <div class="pd-t-10 flexJB border-t">
+                <div>
+                    <div>共
+                        <span class="goods_count"></span>件商品</div>
+                    <div>优惠金额：
+                        <span class="discount_money"></span>元</div>
+                </div>
+                <div>共计：
+                    <span class="cyellow">￥
+                        <span class="count_price"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="content bfff pd-15 radius10 c999 lh32 hide">
+            <div>取货方式：
+                <span class="c000">送货上门</span>
+            </div>
+            <div>姓　　名：
+                <span class="c000 user_name">李四</span>
+            </div>
+            <div>收货电话：
+                <span class="c000 user_phone">15365452665</span>
+            </div>
+            <div>收货地址：
+                <span class="c000 user_address">东莞市南城区周溪高盛科技大厦303</span>
+            </div>
+            <div>配送电话：
+                <span class="c000 staff_phone">18820129123</span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    var oid;
+    var param = {
+        api_name: 'getUserOrderIfno',
+        order_id: getParam().orderId,
+    }
+    ajaxPost(param, "Wxsite/User/api", function (res) {
+        if (res.code == 1) {
+
+            var type = res.data.type == 1 ? "未付款" : res.data.type == 2 ? "待取货" : res.data.type ==
+                3 ? "待配送" : "已完成";
+
+            var orderWay = res.data.order_way;
+            oid = res.data.oid;
+
+            if (orderWay == 2) {
+                $(".pickNum").show();
+                $(".code").text(res.data.code);
+            } else if (orderWay == 3) {
+                $(".content").show();
+                $(".user_name").text(res.data.user_name);
+                $(".user_phone").text(res.data.user_phone);
+                $(".user_address").text(res.data.user_addr + res.data.user_mark);
+                $(".staff_phone").text(res.data.staff_phone);
+            }
+            $(".macno").text(res.data.macno);
+            $(".deviceAddress").text(res.data.address);
+            if (res.data.macno == 1) $(".appealBtn").hide(); // 如果已申诉，则隐藏
+            $(".goods_count").text(res.data.goods_count);
+            $(".discount_money").text(res.data.discount_money);
+            $(".count_price").text(res.data.count_price);
+            $(".oid").text(oid);
+            $(".orderType").text(type);
+            $(".pay_time").text(date('Y-m-d H:i', res.data.pay_time));
+
+
+
+            for (var i = 0; i < res.data.goods.length; i++) {
+                $(".goodsList").append(
+                    '<div class="flex pdtb-15 border-t mg-t-10" data-goodsId="' + res.data.goods[i].goods_id +
+                    '">' +
+                    '<div class="wd-35">' +
+                    '<img src="' + res.data.goods[i].goods_img + '">' +
+                    '</div>' +
+                    '<div class="wd-65 pd-20">' +
+                    '<div class="mg-b-15">' + res.data.goods[i].goods_name + '</div>' +
+                    '<div class="c999">￥' + res.data.goods[i].goods_price + '/' + res.data.goods[i].goods_unit +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="wd-5">X' + res.data.goods[i].goods_num + '</div>' +
+                    '</div>'
+                )
+            }
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    })
+
+
+    $(".appealBtn").on("click", function () {
+        window.location.href = "./o_user_appeal.html?orderId=" + getParam().orderId + "&oid=" + oid;
+    });
+</script>

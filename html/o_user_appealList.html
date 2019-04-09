@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>我的申诉</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+
+<body>
+    <div class="appealList">
+
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    ajaxPost({
+        api_name: "getComplainList",
+        page: 1,
+        pagesize: 999
+    }, "Wxsite/User/api", function (res) {
+        if (res.code == 1) {
+            if (res.data.length > 0) {
+                for (var i = 0; i < res.data.length; i++) {
+                    var status = res.data[i].status == 0 ? '未处理' : '已处理';
+                    var imgs = '';
+                    for (var j = 0; j < res.data[i].pics.length; j++) {
+                        imgs += '<div class="wd-30"><img src="' + res.data[i].pics[j] + '" alt=""></div>';
+                    }
+                    $(".appealList").append(
+                        '<div class="list mg-b-15 pd-15 bfff" data-feedback_id="' + res.data[i].feedback_id +
+                        '">' +
+                        '<div class="border-b pd-b-15">' +
+                        '<div class="flexJB">' +
+                        '<div>' + date('Y-m-d H:i', res.data[i].ctime) + '</div>' +
+                        '<div class="cblue">' + status + '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div>' +
+                        '<div class="mgtb-10">' + res.data[i].content + '</div>' +
+                        '<div class="imgList flexWrap flexJA">' + imgs + '</div>' +
+                        '</div>' +
+                        '</div>'
+                    )
+                }
+            } else {
+                $(".appealList").html("<div class='ta-center'>...暂无数据...</div>");
+            }
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    })
+
+    $(".appealList").on("click", ".list", function () {
+        var feedback_id = $(this).data("feedback_id");
+        window.location.href = "./o_user_appealDetail.html?feedback_id=" + feedback_id;
+    });
+</script>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>商品详情</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .test_btn {
+        width: .8rem;
+        height: .5rem;
+        color: #fff;
+        border-radius: .1rem;
+        background: linear-gradient(to right, #ffaf17, #ff9817);
+    }
+    .t{
+        width: .8rem;
+        height: .8rem;
+        background: #fff3e5;
+        border-radius: 50%;
+        color: #ff9317;
+        font-weight: 600; 
+    }
+    .bBtn{
+        line-height: 1rem;
+        background: #ff9917;
+        color: #fff;
+    }
+    .hideBox{
+        width: 80%;
+        border-radius: .1rem;
+        padding: .2rem;
+    }
+    </style>
+
+    <body>
+        <div class="bigBox">
+            <ul class="container">
+                <div class="flex-sb p20 bw">
+                    <ul>
+                        <li><span class="col9">设备编号：</span>01215224</li>
+                        <li class="mt20"><span class="col9">设备地址：</span>东莞市南城区高盛科技园</li>
+                    </ul>
+                    <li class="t flex">补货</li>
+                </div>
+                <p class="lh100 col9 pl20">商品明细</p>
+                <div class="bw flex-sb p20 bdb">
+                    <ul class="flex">
+                        <img src="../img/3.png" style="width:1.6rem;height:1.6rem;">
+                        <em class="ml20">
+                   <li>百事可乐</li>
+                   <li class="mt20">货道：1010</li>
+                   <li class="mt20">
+                    <span class="color1">￥6.00</span>
+                    <span class="col9 ml40">库存：10</span>
+                </li>
+               </em>
+                    </ul>
+                    <li class="test_btn flex">测试</li>
+                </div>
+                <div class="bw flex-sb p20 bdb">
+                    <ul class="flex">
+                        <img src="../img/3.png" style="width:1.6rem;height:1.6rem;">
+                        <em class="ml20">
+                   <li>百事可乐</li>
+                   <li class="mt20">货道：1010</li>
+                   <li class="mt20">
+                    <span class="color1">￥6.00</span>
+                    <span class="col9 ml40">库存：10</span>
+                </li>
+               </em>
+                    </ul>
+                    <li class="test_btn flex">测试</li>
+                </div>
+            </ul>
+            <div class="flex lh100" style="border-top: 1px solid #ff9917;border-bottom: 1px solid #ff9917">
+            <span class="w30 tac color1">新增商品</span>
+            <span class="bBtn w70 tap tac">我要补货</span>
+        </div>
+        </div>
+        <div class="mask flex">
+        <div class="hideBox bw">
+            <li class="lh60">测试弹窗详细内容测试弹窗详细内容测试弹窗详细内容测试弹窗详细内容测试弹窗详细内容测试弹窗详细内容测试弹窗详细内容测试弹窗详细内容</li>
+            <div class="btn color1 tac bdt lh100">确定</div>
+        </div>
+        </div>
+    </body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script>
+  $('.t').on('click',function () {
+      $('.mask').css('display','flex');
+  })
+    $('.btn').on('click',function () {
+      $('.mask').css('display','none');
+  })  
+</script>

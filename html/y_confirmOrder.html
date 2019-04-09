@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>提交订单</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+        window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+        .a {
+            height: .4rem;
+            width: .4rem;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+        }
+
+        input[name='type']:checked+.a {
+            background: url(../img/5.png);
+            -webkit-background-size: 100% 100%;
+            background-size: 100% 100%;
+            border: 1px solid #fff;
+        }
+
+        input[name='pay']:checked+.a {
+            background: url(../img/5.png);
+            -webkit-background-size: 100% 100%;
+            background-size: 100% 100%;
+            border: 1px solid #fff;
+        }
+
+        .bottom {
+            color: #fff;
+            line-height: 1rem;
+            z-index: 5;
+            background: linear-gradient(to right, #ffad17, #ff9417);
+        }
+
+        .yhj,
+        .payBox {
+            z-index: 5;
+            display: none;
+            height: 5rem;
+            overflow-y: auto;
+        }
+
+        .yhjBox {
+            height: 4rem;
+            overflow-y: auto;
+        }
+
+        .userBox {
+            display: none;
+        }
+
+        .userBox.on {
+            display: block;
+        }
+
+        .yhjBox li:hover {
+            border-top: 1px solid #ff9317;
+            border-bottom: 1px solid #ff9317;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        #allmap {
+            height: 100%;
+            width: 100%;
+            position: fixed !important;
+            top: 0;
+            left: 0;
+        }
+
+        .showMapInfoWrap {
+            font-size: 0.3rem;
+            position: fixed;
+            z-index: 999;
+            bottom: .26667rem;
+            left: .26667rem;
+            right: .26667rem;
+            display: -webkit-flex;
+            display: flex;
+            background-color: white;
+            line-height: 1rem;
+            height: 1rem;
+            padding: 0rem .4rem;
+        }
+
+        .showMapInfoWrap #showMapInfo {
+            -webkit-flex-shrink: 1;
+            flex-shrink: 1;
+            -webkit-flex-grow: 1;
+            flex-grow: 1;
+        }
+
+        .showMapInfoWrap #submitMapInfo {
+            display: inline-block;
+            -webkit-flex-shrink: 0;
+            flex-shrink: 0;
+            color: #666;
+        }
+
+        #map {
+            display: none;
+            z-index: 8;
+        }
+
+        .close {
+            position: fixed;
+            left: 3%;
+            top: 3%;
+            width: 0.8rem;
+            height: 0.8rem;
+            line-height: 0.8rem;
+            background: #ccc;
+            color: #fff;
+            text-align: center;
+        }
+
+        .textBox {
+            height: 0.8rem;
+        }
+
+        .textBox .Boxs {
+            border: 1px solid #ccc;
+            display: inline-block;
+            width: 0.3rem;
+            height: 0.3rem;
+            border-radius: 2px;
+        }
+
+        #textCheck[type=checkbox]:checked+span {
+            background: url(../img/s_true.png) no-repeat center center;
+            background-size: 80% 80%;
+        }
+    </style>
+
+<body>
+    <div class="bigBox">
+        <ul class="container">
+            <div class="payContainer bw"></div>
+            <!-- <div class="list flex_a bw p20 bdb">
+                    <img class="img" src="../img/3.png" style="width:1.7rem;height:1.5rem;" />
+                    <div class="ml20">
+                        <p class="font16">百事可乐</p>
+                        <p class="col9 mt20">x1</p>
+                        <p class="color1 mt20">￥6.00</p>
+                    </div>
+                </div> -->
+            <!-- <div class="list flex_a bw p20 bdb">
+                    <img class="img" src="../img/3.png" style="width:1.7rem;height:1.5rem;" />
+                    <div class="ml20">
+                        <p class="font16">百事可乐</p>
+                        <p class="col9 mt20">x1</p>
+                        <p class="color1 mt20">￥6.00</p>
+                    </div>
+                </div> -->
+            <p class="tae sum lh100 bw p20 col9 mb20">
+                <!-- 共计：¥12.00 -->
+            </p>
+            <div class="p20 bw lh100 flex_a shopWay">
+                <span>取货方式</span>
+                <label class="flex ml100">
+                    <input type="radio" name="type" hidden checked />
+                    <span class="a flex"></span>
+                    <span class="ml20 i_type">自取</span>
+                </label>
+                <label class="flex ml50">
+                    <input type="radio" name="type" hidden />
+                    <span class="a flex"></span>
+                    <span class="ml20 i_type">送货上门</span>
+                </label>
+            </div>
+            <div class="userBox">
+                <li class="bdb bw lh100 plr20 flex-sb">
+                    <span>姓名</span>
+                    <input class="tae name" type="text" name="name" placeholder="请输入收货人姓名" />
+                </li>
+                <li class="bdb bw lh100 plr20 flex-sb">
+                    <span>收货电话</span>
+                    <input class="tae phone" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="11" type="text"
+                        name="name" placeholder="请输入收货电话" />
+                </li>
+                <li class="bdb bw lh100 plr20 flex-sb">
+                    <span>收货地址</span>
+                    <input class="tae address col6" type="text" name="name" id="addCheck" placeholder="请输入收货地址" />
+                    <input type="hidden" name="addr" id="addr" value="" />
+                    <input type="hidden" name="lat" id="lat" value="" />
+                    <input type="hidden" name="lng" id="lng" value="" />
+                </li>
+                <li class="bdb bw lh100 plr20 flex-sb">
+                    <span>详细地址</span>
+                    <input class="tae house" type="text" name="name" placeholder="请输入详细地址" />
+                </li>
+                <li class="bdb bw lh100 plr20">
+                    <span class="send_money">
+                        <!-- 配送费：￥10 --></span>
+                </li>
+                <li class="bdb bw lh100 plr20">
+                    <span class="serve_time">
+                        <!-- 服务时间：00：00-23:00 --></span>
+                </li>
+            </div>
+            <div class="mt20 flex-sb bw p20 yhj_btn">
+                优惠券
+                <ul class="flex">
+                    <span class="y mr20 col9" data-money='0'></span>
+                    <img src="../img/y_arrow_right.png" style="width:.15rem;height:.25rem;" />
+                </ul>
+            </div>
+        </ul>
+        <div class="yhj bw p20">
+            <li class="tae color2 lh100 c_btn bdb">确认</li>
+            <ul class="yhjBox">
+                <!--     <li class="lh100 col9 tac">不使用优惠券</li>
+                    <li class="tac lh100" data-money='1'>-￥1</li>
+                    <li class="tac lh100" data-money='2'>-￥2</li>
+                    <li class="tac lh100" data-money='3'>-￥3</li>
+                    <li class="tac lh100" data-money='4'>-￥4</li> -->
+            </ul>
+        </div>
+        <div class="payBox bw">
+            <li class="font24 color1 lh100 tac payMoney">￥0.00</li>
+            <label class="flex-sb p20 bdb">
+                <ul>
+                    <img src="../img/7.png" style="width:.42rem;" />
+                    <span class="ml20">微信支付</span>
+                </ul>
+                <em class="flex">
+                    <input type="radio" name="pay" value="1" hidden checked />
+                    <span class="a"></span>
+                </em>
+            </label>
+            <label class="flex-sb p20 bdb">
+                <ul>
+                    <img src="../img/8.png" style="width:.42rem;" />
+                    <span class="ml20">钱包支付</span>
+                </ul>
+                <em class="flex">
+                    <input type="radio" name="pay" value="2" hidden />
+                    <span class="a"></span>
+                </em>
+            </label>
+            <label class="flex-sb p20 bdb">
+                <ul>
+                    <img src="../img/9.png" style="width:.42rem;" />
+                    <span class="ml20">IC卡支付</span>
+                </ul>
+                <em class="flex">
+                    <input type="radio" name="pay" value="3" hidden />
+                    <span class="a"></span>
+                </em>
+            </label>
+            <label class="flex-sb p20">
+                <ul>
+                    <img src="../img/10.png" style="width:.42rem;" />
+                    <span class="ml20">云闪付</span>
+                </ul>
+                <em class="flex">
+                    <input type="radio" name="pay" value="4" hidden />
+                    <span class="a"></span>
+                </em>
+            </label>
+        </div>
+        <div class="bottom flex font18 tac">
+            <span class="cPay">实付：￥0.00</span>
+            <img class="ml20" src="../img/6.png" style="width:.36rem;height:.36rem;" />
+        </div>
+    </div>
+    <!--地址选择-->
+    <section id="map">
+        <div id="allmap"></div>
+        <div class="showMapInfoWrap">
+            <p id="showMapInfo"></p>
+            <a id="submitMapInfo">确定</a>
+            <div class="close">X</div>
+        </div>
+    </section>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script>
+    var payData = {}; //支付需要提交的数据
+    var dataUrl = {}; //支付成功返回的数据
+    payData.macno = getUrlParam('macno');
+    payData.scan = getUrlParam('scan') == '' ? 2 : 1; //是否扫一扫进入 1是 2否
+    payData.get_type = 1; // 1自取 2配送 不传默认1
+    payData.buy_goods = getItem('gData'); //购买商品信息
+    // 默认信息
+    dlc_request('Wxsite/MgyOrder/api', {
+        api_name: 'toPayment',
+        buy_goods: getItem('gData'),
+        device_id: getUrlParam('id')
+    }, function (res) {
+        console.log(res);
+        if (res.code == 1) {
+            var str = '';
+            var pData = res.data.goodsList;
+            for (i in pData) {
+                str += '<div class="list flex_a bw p20 bdb" data-id=' + pData[i].goods_id + '>' +
+                    '<img class="img" src="' + pData[i].img + '" style="width:1.7rem;height:1.5rem;" />' +
+                    '<div class="ml20">' +
+                    '<p class="font16">' + pData[i].title + '</p>' +
+                    '<p class="col9 mt20">x' + pData[i].num + '</p>' +
+                    '<p class="color1 mt20">￥' + pData[i].price + '</p>' +
+                    '</div>' +
+                    '</div>'
+            }
+            if (str) {
+                $('.payContainer').html(str);
+            } else {
+                $('.payContainer').html(emptyTip('暂无数据'))
+            }
+            $('.sum').text('共计：￥' + (res.data.totalPrice * 1).toFixed(2)); //金额合计
+            $('.send_money').text('配送费：￥' + (res.data.send_money * 1).toFixed(2)); //配送金额
+            $('.serve_time').text('服务时间：' + res.data.serve_time); //配送金额
+            $('.cPay').text('实付金额：￥' + (res.data.totalPrice * 1).toFixed(2)); //配送金额
+            payData.cPay = res.data.totalPrice;
+            // console.log(res.data.totalPrice)
+        } else if (res.code == -1) {
+            $('.payContainer').html(emptyTip('暂无数据'))
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    })
+    // 金额合计
+    function toTotal() {
+        var coupon;
+        if ($('.y').text() != "" && $('.y').text() != "不使用优惠券") {
+            coupon = $('.y').text().split('￥')[1] * 1;
+        } else {
+            coupon = 0;
+        }
+        if ($('.userBox').hasClass('on')) { //送货上门
+            var pay = $('.sum').text().split('￥')[1] * 1 + $('.send_money').text().split("￥")[1] * 1 - coupon;
+        } else { //自取
+            var pay = $('.sum').text().split('￥')[1] * 1 - coupon;
+        }
+
+        if (pay < 0) pay = 0;
+        payData.cPay = pay;
+        // payData.coupon_id = pay;
+        console.log(coupon);
+        // console.log(payData.cPay);
+        $('.cPay').text("实付金额：￥" + pay.toFixed(2)); //总金额变化
+    }
+    // 送货上门和自取状态选择
+    $("input[name=type]").on('change', function () {
+        var name = $('input[name="type"]:checked').parents('label').find('.i_type').text();
+        if (name == '送货上门') {
+            $('.userBox').addClass('on');
+            payData.get_type = 2; // 1自取 2配送 不传默认1
+            toTotal();
+        } else {
+            $('.userBox').removeClass('on');
+            payData.get_type = 1; // 1自取 2配送 不传默认1
+            toTotal();
+        }
+    });
+    // 如果是扫描过来，不显示取货方式
+    if (getUrlParam('scan') == 1) {
+        $('.shopWay').addClass('hide');
+    }
+    // 优惠券
+    dlc_request('Wxsite/User/api', {
+        api_name: 'userDiscount',
+        page: 1,
+        pagesize: 999,
+        type: 1
+    }, function (res) {
+        console.log(res);
+        if (res.code == 1) {
+            var str = '';
+            var cData = res.data;
+            for (i in cData) {
+                str += '<li class="tac lh100" data-id=' + cData[i].log_id + ' data-money="' + cData[i].discount +
+                    '">-￥' + cData[i].discount + '</li>'
+            }
+            $('.yhjBox').html('<li class="lh100 col9 tac"  data-money="0">不使用优惠券</li>' + str);
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    })
+    // 弹出支付对话框
+    var onOff = 0;
+    $('.bigBox').on('click', '.bottom', function () {
+        if ($('.userBox').hasClass('on')) { //送货上门
+            var name = $('.name').val();
+            var phone = $('.phone').val();
+            var address = $('.address').val();
+            var house = $('.house').val();
+            if (isNull(name)) {
+                dlctipbox.show('请输入收货人姓名')
+            } else if (isNull(phone)) {
+                dlctipbox.show('请输入收货人电话号码')
+            } else if (!checkMobileAndTel(phone)) {
+                dlctipbox.show('收货人电话号码格式不正确')
+            } else if (isNull(address)) {
+                dlctipbox.show('请输入地址')
+            } else if (isNull(house)) {
+                dlctipbox.show('请输入详细地址')
+            } else {
+                payData.name = name; // 收货人姓名 配送必传
+                payData.phone = phone; // 收货人电话 配送必传
+                payData.lat = lat; // 收货地址纬度  配送必传
+                payData.lng = lng; // 收货地址经度  配送必传
+                payData.addr = address; // 收货人地址 配送必传
+                payData.house = house; // 收货人门牌号  配送必传
+                // 弹出立即支付界面
+                showMask();
+                $('.payBox').show();
+                $('.payMoney').text("￥" + payData.cPay); //总金额变化
+                $('.bottom').addClass('rechargeBtn');
+            }
+        } else { //自取
+            // 弹出立即支付界面
+            showMask();
+            $('.payBox').show();
+            $('.payMoney').text("￥" + payData.cPay); //总金额变化
+            $('.bottom').addClass('rechargeBtn');
+        }
+    })
+    // 立即支付
+    $('.bigBox').on('click', '.rechargeBtn', function () {
+        $(".payBox").hide();
+        $(".mask1").hide()
+        recharge();
+    })
+    // 关闭支付弹出框的内容
+    function closeRecharge() {
+        onOff = 0;
+        hideMask();
+        $('.bottom').removeClass('rechargeBtn');
+        $('.payBox').hide();
+    }
+    // 支付接口
+    function recharge() {
+        loadingShow()
+        if (onOff == 1) return false;
+        onOff = 1;
+        var pay = payData.cPay;
+        var pay_type = $('input[name=pay]:checked').val();
+        payData.api_name = "wxPlatformPay";
+        payData.pay_type = pay_type; //支付类型 1微信 2余额 3ic卡 4云闪付
+        payData.total_price = pay;
+        console.log(11111);
+        if (pay_type == 1) { //微信支付
+            dataUrl.type = 1;
+            dlc_request('Wxsite/MgyOrder/api', payData, function (res) {
+                console.log(res);
+                // alert(JSON.stringify(res))
+                if (res.code == 1) {
+
+                    callpay(res.data);
+                } else {
+                    closeRecharge();
+                    dlctipbox.show(res.msg);
+                }
+            })
+        } else if (pay_type == 2) { //余额支付
+            dataUrl.type = 2;
+            dlc_request('Wxsite/MgyOrder/api', payData, function (res) {
+                console.log(res);
+                loadingHide();
+                if (res.code == 1) {
+                    dlctipbox.show(res.msg);
+                    if (res.data.order_way == 1) {
+                        var href = "y_payResult.html?type=1";
+                    } else if (res.data.order_way == 2) {
+                        var href = "y_payResult.html?type=2&code=" + res.data.code;
+                    } else {
+                        var href = "y_payResult.html?type=3&phone=" + res.data.mobile;
+                    }
+                    setTimeout(() => {
+                        location.href = href
+                    }, 1500)
+                } else {
+                    closeRecharge();
+                    dlctipbox.show(res.msg);
+                }
+            })
+        }
+    }
+    // 关闭优惠券的框
+    $('body').on('click', '.c_btn', function () {
+        $('.yhj').hide();
+        $('.bottom').show();
+        closeRecharge();
+    })
+    // 优惠券点击弹出选择框
+    $('.yhj_btn').on('click', function () {
+        showMask();
+        $('.bottom').hide();
+        $('.yhj').show();
+    })
+    // 优惠券选择
+    $('.yhjBox').on('click', 'li', function () {
+        $('.y').text($(this).text());
+        payData.coupon_id = $(this).data("id")
+        console.log(payData.coupon_id)
+        toTotal();
+    })
+    // 点击任意位置关闭支付或者优惠券的弹框
+    $('.bigBox').on('click', '.mask1', function () {
+        hideMask();
+        $('.yhj').hide();
+        $('.payBox').hide();
+        $('.bottom').show().html('实付金额：￥' + payData.cPay.toFixed(2) +
+            '<img class="ml20" src="../img/6.png" style="width:.36rem;height:.36rem;">');
+    })
+    // 提交支付信息
+    var jsApiParameters = {};
+    //调用微信JS api 支付
+    function jsApiCall(data) {
+        jsApiParameters = {
+            appId: data.appId,
+            nonceStr: data.nonceStr,
+            package: data.package,
+            signType: data.signType,
+            timeStamp: data.timeStamp,
+            paySign: data.paySign,
+        };
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            jsApiParameters, // 提交的支付信息
+            function (res) {
+                console.log(res)
+                WeixinJSBridge.log(res.err_msg);
+                if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                    setItem("payStatus", true);
+                    switch (data.order_way) {
+                        case 1:
+                            location.href = "y_payResult.html?type=1";
+                            break;
+                        case 2:
+                            location.href = "y_payResult.html?type=2&code=" + data.code;
+                            break;
+                        case 3:
+                            location.href = "y_payResult.html?type=2&phone=" + data.sendMobile;
+                            break;
+                    }
+                } else {
+                    dlctipbox.show("支付失败")
+                    setItem("payStatus", false)
+                }
+            }
+        );
+    }
+    //调用微信 支付
+    function callpay(data) {
+        if (typeof WeixinJSBridge == "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+            }
+        } else {
+            jsApiCall(data);
+        }
+    }
+</script>
+<script src="https://cdn.bootcss.com/html5shiv/r29/html5.js" type="text/javascript"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=EC84208f1ce9705ec4700f03df6203e0"></script>
+<script type="text/javascript">
+    //地址选择
+    $('#addCheck').click(function () {
+        $('#map').show();
+    })
+    var map = new BMap.Map("allmap");
+    var point = new BMap.Point(108.95, 34.27);
+    map.centerAndZoom(point, 18);
+    var showMapInfo = document.getElementById('showMapInfo');
+    //  var city,jiandao;
+    var lng, lat, addr;
+
+
+    var geolocation = new BMap.Geolocation();
+
+    var geoc = new BMap.Geocoder();
+    geolocation.getCurrentPosition(function (r) {
+        console.log(r.point);
+        if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+
+            var mk = new BMap.Marker(r.point);
+            map.addOverlay(mk); //标出所在地
+            mk.enableDragging(); //设置可拖拽
+
+            mk.addEventListener("dragend", function (e) { //拖动事件
+                var pt = e.point,
+                    dizhi;
+                geoc.getLocation(pt, function (rs) {
+                    console.log(rs)
+                    lng = rs.point.lng;
+                    lat = rs.point.lat;
+                    addr = rs.address;
+                    showMapInfo.innerHTML = rs.address;
+
+
+                });
+                console.log(e.point.lng + ", " + e.point.lat); //打印拖动结束坐标
+            });
+
+            map.panTo(r.point); //地图中心移动
+            //alert('您的位置：'+r.point.lng+','+r.point.lat);
+            var point = new BMap.Point(r.point.lng, r.point.lat); //用所定位的经纬度查找所在地省市街道等信息
+            var gc = new BMap.Geocoder();
+            gc.getLocation(point, function (rs) {
+                console.log(rs)
+                lng = rs.point.lng;
+                lat = rs.point.lat;
+                addr = rs.address;
+                showMapInfo.innerHTML = rs.address;
+            });
+        } else {
+            alert('failed' + this.getStatus());
+        }
+    }, {
+        enableHighAccuracy: true
+    });
+
+    $('#submitMapInfo').click(function () {
+        $('#map').hide();
+        $('#addCheck').val(addr)
+        $('#lat').val(lat);
+        $('#lng').val(lng);
+        $('#addr').val(addr);
+        payData.lat = lat;
+        payData.lng = lng;
+        payData.addr = addr;
+    })
+
+    $('.close').click(function () {
+        $('#map').hide();
+        $('#addCheck').val('请选择');
+        $('#lat').val();
+        $('#lng').val();
+        $('#addr').val();
+    })
+</script>

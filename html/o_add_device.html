@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>设备列表</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+
+<body>
+    <div class="roadlist c999 addlist">
+        <!-- <div class="bfff pd-15 border-b flexJB list">
+            <div class="msg lh32">
+                <div>设备编号：
+                    <span class="c000">516546515</span>
+                </div>
+                <div>设备地址：
+                    <span class="c000">东莞市南城区高盛科技园</span>
+                </div>
+            </div>
+            <div class="state state1">
+                在线
+            </div>
+        </div>
+        <div class="bfff pd-15 border-b flexJB list">
+            <div class="msg lh32">
+                <div>设备编号：
+                    <span class="c000">516546515</span>
+                </div>
+                <div>设备地址：
+                    <span class="c000">东莞市南城区高盛科技园</span>
+                </div>
+            </div>
+            <div class="state state2">
+                故障
+            </div>
+        </div>
+        <div class="bfff pd-15 border-b flexJB list">
+            <div class="msg lh32">
+                <div>设备编号：
+                    <span class="c000">516546515</span>
+                </div>
+                <div>设备地址：
+                    <span class="c000">东莞市南城区高盛科技园</span>
+                </div>
+            </div>
+            <div class="state state3">
+                离线
+            </div>
+        </div> -->
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    $(function () {
+
+        var param = {
+            api_name: "getDeviceList",
+            page: 1,
+            pagesize: 999
+        }
+        ajaxPost(param, "Wxsite/Device/api", function (res) {
+            if (res.code == 1) {
+                var data = res.data;
+                if (data.length > 0) {
+                    for (var i = 0; i < data.length; i++) {
+                        var status = data[i].status_name;
+                        var statusClass = (data[i].status_name == "在线") ? "state1" : (data[i].status_name ==
+                                "离线") ?
+                            "state3" : "state2";
+                        $(".roadlist").append(
+                            "<div class='bfff pd-15 border-b flexJB list' data-id='" + data[i].device_id +
+                            "'>" +
+                            "<div class='msg lh32'>" +
+                            "<div>设备编号：<span class='c000'>" + data[i].macno + "</span></div>" +
+                            "<div>设备地址：<span class='c000'>" + data[i].address + "</span></div>" +
+                            "</div>" +
+                            "<div class='state " + statusClass + "'>" + status + "</div>" +
+                            "</div>"
+                        )
+                    }
+                } else {
+                    $(".roadlist").append("<div class='ta-center'>...暂无数据...</div>");
+                }
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        })
+
+    })
+</script>

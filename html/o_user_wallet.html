@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>我的钱包</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+<body>
+    <div class="wallet">
+        <div class="title flexWrap cfff">
+            <img src="../img/o_wallet_bg.png">
+            <div class="inner_box">
+                <div>余额（元）</div>
+                <div class="yue font50 fontb"></div>
+                <div class="mg-t-20 btnRecharge" onclick="location.href='./o_user_recharge.html'">充值</div>
+            </div>
+        </div>
+        <div class="mg-t-25 bfff">
+            <div class="pd-15 border-b flexJB" onclick="location.href='./o_user_coupon.html'">
+                <div class="flex">
+                    <img src="../img/coupon.png" class="icon mg-r-10">
+                    <div>优惠券</div>
+                </div>
+                <div class="rArow"></div>
+            </div>
+            <div class="pd-15 flexJB" onclick="location.href='./o_user_capitalDetail.html'">
+                <div class="flex">
+                    <img src="../img/detail.png" class="icon mg-r-10">
+                    <div>资金明细</div>
+                </div>
+                <div class="rArow"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    ajaxPost({api_name:"getUserInfo"}, "Wxsite/User/api", function (res) {
+        if (res.code == 1) {
+            $(".yue").text(res.data.money)
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    })
+</script>

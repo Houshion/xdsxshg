@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>补货首页</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+
+<body>
+    <div class="addIndex">
+        <div class="wd-100 box">
+            <img src="../img/o_bg2.png">
+            <div class="ta-center divice mg-auto wd-100">
+                <div>设备总数</div>
+                <div class="font32 count"></div>
+            </div>
+        </div>
+        <div class="mainBtn flexWrap ta-center font18">
+            <div class="list wd-50" onclick="location.href='./o_add_device.html'">
+                <div class="border-b border-r pd-50">
+                    <img src="../img/o_c1.png">
+                    <div>我的设备</div>
+                </div>
+            </div>
+            <div class="list wd-50" onclick="location.href='./o_add_list.html'">
+                <div class="border-b pd-50">
+                    <img src="../img/o_c2.png">
+                    <div>我要补货</div>
+                </div>
+            </div>
+            <div class="list wd-50" onclick="location.href='./o_roadList.html'">
+                <div class="border-b border-r pd-50">
+                    <img src="../img/o_c3.png">
+                    <div>测试通道</div>
+                </div>
+            </div>
+            <div class="list wd-50" onclick="location.href='./o_roadScan.html'">
+                <div class="border-b pd-50">
+                    <img src="../img/o_c4.png">
+                    <div>货道扫描</div>
+                </div>
+            </div>
+        </div>
+        <div class="logout pd-20">
+            <div class="btn btn1">退出登录</div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    $(function () {
+        $(".logout").on("click", "btn", function () {
+            goTo("./o_add_login.html");
+        });
+
+        ajaxPost({api_name: "staffHome"}, "Wxsite/Device/api", function (res) {
+            if (res.code == 1) {
+                $(".count").text(res.data.count);
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        })
+
+        $(".logout").on("click", ".btn", function () {
+            ajaxPost({api_name: "staffLogout"}, "Wxsite/Device/api", function (res) {
+                dlctipbox.show(res.msg);
+                if (res.code == 1) {
+                    goTo("./o_add_login.html");
+                }
+            })
+        })
+    });
+</script>

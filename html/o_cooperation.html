@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>合作加盟</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+    <style>
+        .border-r {
+            border-color: #d2d2d2
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cooperation pd-20">
+        <div class="beee radius10 flex pd-10 boxes">
+            <div class="wd-20 box border-r">姓名</div>
+            <div class="wd-80 mg-l-15">
+                <input type="text" class="input" id="link_name" placeholder="请输入联系人姓名">
+            </div>
+        </div>
+        <div class="beee radius10 flex pd-10 boxes">
+            <div class="wd-20 box border-r">电话</div>
+            <div class="wd-80 mg-l-15">
+                <input type="text" class="input" id="link_phone" placeholder="请输入联系人电话" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"
+                maxlength="11">
+            </div>
+        </div>
+        <div class="beee radius10 flex pd-10 boxes">
+            <div class="wd-20 box border-r">备注</div>
+            <div class="wd-80 mg-l-15">
+                <!-- <textarea type="text" class="input" id="memo"></textarea> -->
+                <textarea name="memo" id="memo" class="input" cols="30" rows="4" placeholder="合作意向、优势等"></textarea>
+            </div>
+        </div>
+        <div class="btn btn1 submit">提交</div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    $(function () {
+        $(".submit").on("click", function () {
+
+            var link_name = $("#link_name").val();
+            var link_phone = $("#link_phone").val();
+            var memo = $("#memo").val();
+            var param = {
+                api_name: "addCooperation",
+                link_name: link_name,
+                link_phone: link_phone,
+                memo: memo,
+            };
+
+            if (isPhone(link_phone)) {
+                if(isNull(link_name)){
+                    dlctipbox.show("联系人姓名不能为空");
+                    return false;
+                }
+                if(isNull(memo)){
+                    dlctipbox.show("备注不能为空");
+                    return false;
+                }
+                ajaxPost(param, "Wxsite/User/api", function (res) {
+                    if (res.code == 1) {
+                        dlctipbox.show("提交成功");
+                        setTimeout( function () {
+                            WeixinJSBridge.call('closeWindow');
+                        },1500);
+                    } else {
+                        dlctipbox.show(res.msg);
+                    }
+                })
+            } else {
+                dlctipbox.show("请填写正确的手机号码");
+            }
+
+        })
+
+    })
+</script>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>充值</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+
+<body>
+    <div class="recharge pd-10">
+        <div class="pd-10 title">充值金额</div>
+        <div class="chargeList flexJA flexWrap ta-center">
+            
+        </div>
+        <div class="btn btn1 mg-t-15 ">微信充值</div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    var money = 0;
+
+    ajaxPost({
+        api_name: "getRechargeList"
+    }, "Wxsite/User/api", function (res) {
+        if (res.code == 1) {
+            for (var i = 0; i < res.data.length; i++) {
+                var pick = i == 0 ? "pick" : "";
+                $(".chargeList").append('<div class="wd-45 ' + pick + '">' + res.data[i] + '</div>');
+            }
+            money = res.data[0];
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    })
+
+    $(".chargeList").on("click", "div", function () {
+        $(this).addClass("pick");
+        $(this).siblings().removeClass("pick");
+        money = parseInt($(this).text());
+    })
+
+    // 提交支付信息
+    var jsApiParameters = {};
+    //调用微信JS api 支付
+    function jsApiCall() {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            jsApiParameters, // 提交的支付信息
+            function(res) {
+                loadingHide();
+                // alert(JSON.stringify(jsApiParameters))
+                // alert(res.err_msg)
+                WeixinJSBridge.log(res.err_msg);
+                if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                    dlctipbox.show("支付成功");
+                    setTimeout(() => {
+                        history.go(-1);
+                    }, 2000);
+                } else {
+                    dlctipbox.show("支付失败");
+                }
+            }
+        );
+    }
+    //调用微信 支付
+    function callpay() {
+        if (typeof WeixinJSBridge == "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+            }
+        } else {
+            jsApiCall();
+        }
+    }
+
+    $(".btn").on("click", function () {
+        if (money != 0){
+            loadingShow();
+            $(".mask").show()
+            ajaxPost({
+                api_name: "recharge",
+                money: money
+            }, "Wxsite/MgyOrder/api", function (res) {
+                if (res.code == 1) {
+                    jsApiParameters = res.data;
+                    callpay();
+                } else {
+                    dlctipbox.show(res.msg);
+                }
+            })
+        }else{
+            dlctipbox.show("金额为0，不能充值");
+        }
+    })
+</script>

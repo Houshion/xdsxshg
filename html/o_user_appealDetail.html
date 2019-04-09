@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>申诉详情</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+
+<body>
+    <div class="appealList">
+        <div class="main pd-15 bfff">
+            <div class="border-b pd-b-15">
+                <div class="flexJB">
+                    <div class="c999">订单编号：
+                        <span class="oid"></span>
+                    </div>
+                    <div class="cyellow status"></div>
+                </div>
+            </div>
+            <div class="border-b mg-b-15 pd-b-15">
+                <div class="mgtb-10 content"></div>
+                <div class="imgList flexWrap flexJS">
+                    <!-- <div class="wd-30">
+                        <img src="../img/o_colo.png" alt="">
+                    </div>
+                    <div class="wd-30">
+                        <img src="../img/o_colo.png" alt="">
+                    </div>
+                    <div class="wd-30">
+                        <img src="../img/o_colo.png" alt="">
+                    </div> -->
+                </div>
+            </div>
+            <div class="ctime"></div>
+        </div>
+        <div class="feedbac hide">
+            <div class="pd-15">反馈信息</div>
+            <div class="pd-15 bfff">
+                <div class="feedbackContent"></div>
+                <div class="mg-t-15 c999 feedbackTime"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    ajaxPost({
+        api_name: "getComplainInfo",
+        feedback_id: getParam().feedback_id,
+    }, "Wxsite/User/api", function (res) {
+        if (res.code == 1) {
+            var status = res.data.status == 0 ? "未处理" : "已处理";
+            $(".oid").text(res.data.oid);
+            $(".content").text(res.data.content);
+            $(".status").text(status);
+            $(".ctime").text(date('Y-m-d H:i', res.data.ctime));
+            if (res.data.status == 1) {
+                $(".status").removeClass("cyellow").addClass("cblue");
+                $(".feedbac").show();
+                $(".feedbackContent").text(res.data.reply_text);
+                $(".feedbackTime").text(date('Y-m-d H:i', res.data.reply_time));
+            }
+            console.log(JSON.stringify(res))
+            for (var i = 0; i < res.data.pics.length; i++) {
+                $(".imgList").append('<div class="wd-30"><img src="'+res.data.pics[i]+'" alt=""></div>')
+            }
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    })
+</script>

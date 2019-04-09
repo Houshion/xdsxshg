@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>商品清单</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+        window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+        .searchBox {
+            height: 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        #search {
+            width: 80%;
+            padding-left: .5rem;
+            background: url(../img/search.png) no-repeat;
+            -webkit-background-size: .28rem .28rem;
+            background-size: .28rem .28rem;
+        }
+
+
+        .lBox {
+            width: 2rem;
+            height: 11rem;
+            position: fixed;
+            border-right: 1px solid #e8e8e8;
+        }
+
+        .rBox {
+            margin-left: 2rem;
+        }
+
+        .lBox li {
+            height: 1rem;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .lBox li.active {
+            color: #fff;
+            background: linear-gradient(to right, #6c8eda, #4bc0ed);
+        }
+
+
+        .c_box {
+            margin-left: 2rem;
+        }
+
+        .wh {
+            width: 0.68rem;
+            height: 0.68rem;
+            display: flex;
+            color: #999;
+            font-size: .32rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .add,
+        .minus {
+            border-right: none;
+            border-radius: 6px 0 0 6px;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+        }
+
+        b {
+            font-weight: normal;
+        }
+
+        #pay {
+            width: 2rem;
+            height: 1rem;
+            color: #fff;
+        }
+
+        .btn {
+            width: 1.6rem;
+            height: 100%;
+            color: #fff;
+        }
+
+        .pay_btn {
+            width: 2.5rem;
+            font-size: .36rem;
+            background: linear-gradient(to right, #ffad17, #ff9417);
+        }
+
+        /*选择*/
+
+        input,
+        button {
+            background: none;
+        }
+
+        input[name=cart]:checked+span {
+            background: url(../img/pay1.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .c {
+            width: .4rem;
+            height: .4rem;
+            border-radius: 50%;
+            background: #fff;
+            border: 1px solid #e8e8e8;
+            display: block;
+            margin-right: .2rem;
+        }
+
+        .tip {
+            position: absolute;
+            width: 0.4rem;
+            height: 0.4rem;
+            line-height: 0.4rem;
+            background: #ff6a6a;
+            color: #fff;
+            font-size: 0.22rem;
+            top: -0.1rem;
+            left: 100%;
+            border-radius: 1rem;
+        }
+
+        .shopCar {
+            display: none;
+        }
+
+        .shopCar.on {
+            display: block;
+            max-height: 6.8rem;
+            flex: 1;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            overflow-scrolling: touch;
+        }
+
+        .h {
+            display: none;
+        }
+    </style>
+
+<body>
+    <div class="bigBox">
+        <ul class="container">
+            <!--    <label class="list flex_a bw p20 bdb"> <img class="img" src="http://xdsxgzh.app.xiaozhuschool.com/Upload/img/2018-04-02/5ac1d5713d75f.jpg" style="width:1.7rem;height:1.5rem;">
+                    <ul class="ml20"> <a href="y_shopDetail.html" class="font16 title">脉动</a>
+                        <p class="mt20 col9 stock">库存：222</p>
+                        <div class="color1 mt20 flex-sb"> <span class="price">￥4.00</span>
+                            <div class="flex c_box">
+                                <label class="wh minus">
+                                    <button class="font18 col6">−</button>
+                                </label>
+                                <input class="font18 wh tac num" type="number" value="2" data-id="30" data-name="脉动" data-num="0" data-price="4.00" data-img="http://xdsxgzh.app.xiaozhuschool.com/Upload/img/2018-04-02/5ac1d5713d75f.jpg" data-track="222">
+                                <label class="wh add">
+                                    <button class="font18 col6">+</button>
+                                </label>
+                            </div>
+                        </div>
+                    </ul>
+                </label>
+                <label class="list flex_a bw p20 bdb"> <img class="img" src="http://xdsxgzh.app.xiaozhuschool.com/Upload/img/2018-04-02/5ac1d5e8d8115.jpg" style="width:1.7rem;height:1.5rem;">
+                    <ul class="ml20"> <a href="y_shopDetail.html" class="font16 title">海鲜产品</a>
+                        <p class="mt20 col9 stock">库存：22</p>
+                        <div class="color1 mt20 flex-sb"> <span class="price">￥10.00</span>
+                            <div class="flex c_box">
+                                <label class="wh minus">
+                                    <button class="font18 col6">−</button>
+                                </label>
+                                <input class="font18 wh tac num" type="number" value="2" data-id="33" data-name="海鲜产品" data-num="0" data-price="10.00" data-img="http://xdsxgzh.app.xiaozhuschool.com/Upload/img/2018-04-02/5ac1d5e8d8115.jpg" data-track="22">
+                                <label class="wh add">
+                                    <button class="font18 col6">+</button>
+                                </label>
+                            </div>
+                        </div>
+                    </ul>
+                </label>
+                <label class="list flex_a bw p20 bdb"> <img class="img" src="http://xdsxgzh.app.xiaozhuschool.com/Upload/img/2018-05-07/5af042f1b05c0.jpg" style="width:1.7rem;height:1.5rem;">
+                    <ul class="ml20"> <a href="y_shopDetail.html" class="font16 title">阿萨姆奶茶</a>
+                        <p class="mt20 col9 stock">库存：22</p>
+                        <div class="color1 mt20 flex-sb"> <span class="price">￥4.00</span>
+                            <div class="flex c_box">
+                                <label class="wh minus">
+                                    <button class="font18 col6">−</button>
+                                </label>
+                                <input class="font18 wh tac num" type="number" value="2" data-id="49" data-name="阿萨姆奶茶" data-num="0" data-price="4.00" data-img="http://xdsxgzh.app.xiaozhuschool.com/Upload/img/2018-05-07/5af042f1b05c0.jpg" data-track="22">
+                                <label class="wh add">
+                                    <button class="font18 col6">+</button>
+                                </label>
+                            </div>
+                        </div>
+                    </ul>
+                </label> -->
+        </ul>
+        <div class="bw bottom" style="z-index: 5">
+            <!-- 购物车 -->
+            <div class="shopCar bdb">
+                <!--                <p class="tae color2 lh100 plr20 del_btn">清空购物车</p>
+                        <div class="flex-sb plr20 lh100 list" data-id="1">
+                            <span class="title">红豆鸡翅</span>
+                            <span class="color1 price">￥6.00</span>
+                            <div class="flex c_box">
+                                <label class="wh minus">
+                                    <button class="font18 col6">&minus;</button>
+                                </label>
+                                <input class="font18 wh tac num" type="number" name="" value="1" />
+                                <label class="wh add">
+                                    <button class="font18 col6">+</button>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex-sb plr20 lh100 list" data-id="2">
+                            <span class="title">香辣鸡翅</span>
+                            <span class="color1 price">￥6.00 </span>
+                            <div class="flex c_box">
+                                <label class="wh minus">
+                                    <button class="font18 col6">&minus;</button>
+                                </label>
+                                <input class="font18 wh tac num" type="number" name="" value="1" />
+                                <label class="wh add">
+                                    <button class="font18 col6">+</button>
+                                </label>
+                            </div>
+                        </div>
+ -->
+            </div>
+            <div class="flex-sb lh100" id="bBox">
+                <div class="flex_a plr24">
+                    <p class="gwc" style="position: relative;" id="gwc"><img src="../img/4.png" alt="" style="width: .8rem;"
+                            id="car"><b class="tip tac">0</b></p>
+                    <p class="tolSum font18 color1" style="margin-left:1.35rem;">￥0.00</p>
+                </div>
+                <div class="flex" style="height:100%;">
+                    <span class="pay_btn flex btn">去结算</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script>
+    var pData = [];
+    getUrlParam('scan') == '' ? '' : pData.scan;
+    // 获取清单列表
+    dlc_request('Wxsite/MgyOrder/api', {
+        api_name: 'deviceGoods',
+        macno: getUrlParam('macno'),
+        page: 1,
+        pagesize: 999
+    }, function (res) {
+        console.log(res);
+        if (res.code == 1) {
+            var str = '';
+            var listData = res.data.goods_list;
+            for (i in listData) {
+                var obj = listData[i];
+                console.log(222);
+                str += '<label class="list flex_a bw p20 bdb" data-goods_id=' + obj.goods_id +
+                    '> <img class="img" src="' + obj.img +
+                    '" style="width:1.7rem;height:1.5rem;"> <ul class="ml20"> <a href="y_shopDetail.html" class="font16 title">' +
+                    obj.title + '</a> <p class="mt20 col9 stock">库存：' + obj.inventory +
+                    '</p> <div class="color1 mt20 flex-sb"> <span class="price">￥' + obj.price +
+                    '</span> <div class="flex c_box"> <div class="wh minus" onclick="totals(this,2)"> <div class="font18 col6">−</div> </div> <input class="font18 wh tac num" type="number" readonly unselectable="on" onfocus="this.blur()" value="0" data-id="' +
+                    obj.device_goods_id + '" data-name="' + obj.title + '" data-price="' + obj.price +
+                    '" data-img="' + obj.img + '"  data-track="' + obj.inventory +
+                    '"> <div class="wh add" onclick="totals(this,1)"> <div class="font18 col6">+</div> </div> </div> </div> </ul> </label>'
+            }
+            pData.id = res.data.device_id
+            if (str) {
+                $('.container').html(str);
+            } else {
+                $('.container').html(emptyTip(res.msg));
+            }
+        } else if (res.code == -1) {
+            $('.container').html(emptyTip(res.msg));
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    }, false)
+    //添加购物车
+    var tip = $('.tip').text() * 1;
+    // $('.bigBox').on('click', '.add', function (event) {
+    //     event.stopPropagation();
+    //     if ($(this).parents().is('.container')) {
+    //         shoppingCartAnimate($(this).parents('.list').find('.img'), $('#car'));
+    //     }
+    //     totals(this, 1);
+    // })
+    function changeNum(obj, type) {
+        // alert(33333)
+        // if ($(obj).parents().is('.container')) {
+        //     shoppingCartAnimate($(obj).parents('.list').find('.img'), $('#car'));
+        // }
+        totals(obj, type);
+    }
+    //减少购物车
+    // $('.bigBox').on('click', '.minus', function (event) {
+    //     event.stopPropagation();
+    //     totals(this, 2);
+    // })
+
+
+    // 清空购物车
+    $('.bigBox').on('click', '.del_btn', function () {
+        $('.shopCar').removeClass('on');
+        $('.tip').text('0');
+        tip = 0;
+        $('.tolSum').text('￥0.00');
+        $('.shopCar .list').find('.num').val(0);
+        getList();
+        hideMask();
+    })
+
+    // 弹出购物车
+    $('.bigBox').on('click', '.gwc', function () {
+        if ($('.tip').text() != 0) {
+            $('.shopCar').toggleClass('on');
+            if ($('.shopCar').hasClass('on')) {
+                showMask();
+                getShopCar();
+
+            } else {
+                hideMask();
+                getList();
+            }
+        } else {
+            dlctipbox.show('请先添加商品~')
+        }
+    })
+
+    // 关闭购物车
+    $('body').on('click', '.mask1', function () {
+        $('.shopCar').removeClass('on');
+        getList();
+        hideMask();
+    })
+    // 去结算
+    $('.pay_btn').on('click', function () {
+        if ($('.tip').text() != 0) {
+            if ($('.shopCar').hasClass('on')) {
+                getList();
+                toPayment();
+            } else {
+                getShopCar();
+                toPayment();
+            }
+        } else {
+            dlctipbox.show('请先添加商品~')
+        }
+
+    })
+    // pData.id = getUrlParam('id');
+    pData.macno = getUrlParam('macno');
+    getUrlParam('scan') ? pData.scan = getUrlParam('scan') : "";
+
+    function toPayment() { //去结算提交数据
+        var goodsData = [];
+        goodsData = getShopCar();
+        setItem('gData', JSON.stringify(goodsData)); //把数据存储起来
+        setTimeout(function () {
+            _href('y_confirmOrder.html', pData);
+        })
+    }
+    // 汇总&&加减
+    function totals(_this, type) {
+        var initial_sum = $('.tolSum').text().split('￥')[1] * 1; //获取总金额初始值
+        var single_num = $(_this).parents('.list').find('.price').text().split('￥')[1] * 1; //单价
+        var stock = $(_this).parents('.list').find('.num').data('track'); //库存
+        var goods_id = $(_this).parents('.list').data('goods_id');
+        var numbers = $(_this).parents('.list').find('.num').val() * 1; //单个的input数量
+        // alert(type)
+        if (type == 1) { //加
+            if (numbers < stock) { //判断是否超出库存
+                numbers = numbers + 1;
+                var sum = initial_sum + single_num; //总价
+                tip++;
+            } else {
+                dlctipbox.show('已经超出库存~');
+                return false;
+            };
+            console.log($(_this).parents('.list').find('.num').val())
+            $(_this).prevAll('input').val(numbers); //input的数值赋值
+            if ($(_this).parents().is('.container')) { //列表部分加入飞入购物车的特效
+                shoppingCartAnimate($(_this).parents('.list').find('.img'), $('#car'));
+            }
+        } else { //减
+            if (numbers > 0) { //大于0的时候才执行
+                tip--;
+                numbers = numbers - 1;
+                var sum = initial_sum - single_num;
+                $(_this).parents('.list').find('.num').val(numbers);
+                console.log($(_this).parents('.list').find('.num').val())
+                if ($(_this).parents().is('.shopCar')) { //列表部分加入飞入购物车的特效
+                    numbers == 0 ? $(_this).parents('.list').css('display', 'none') : '';
+                }
+            } else {
+                // 如果数值小于0，删除整行
+                numbers = 0;
+                tip = 0;
+                sum = 0;
+                return false;
+            }
+        }
+        if (numbers < 0) {
+            numbers = 0;
+            return false;
+        }
+        if (tip < 0) {
+            tip = 0;
+            return false;
+        }
+        if (sum < 0) {
+            sum = 0;
+            return false;
+        }
+        $('.tip').text(tip); //购物车的数量
+        $('.tolSum').text('￥' + sum.toFixed(2)); //总价之和
+    }
+
+    var goods = {},
+        goods_id, goods_num;
+    // 循环购物车列表
+    function getShopCar() {
+        var obj = {};
+        var arr = [];
+        var str = '';
+        for (var i = 0; i < $('.container>label').length; i++) {
+            obj = {};
+            obj.id = $('.container>label').eq(i).find('input').data('id');
+            obj.name = $('.container>label').eq(i).find('input').data('name');
+            obj.price = $('.container>label').eq(i).find('input').data('price');
+            obj.num = $('.container>label').eq(i).find('input').val();
+            obj.img = $('.container>label').eq(i).find('input').data('img');
+            obj.track = $('.container>label').eq(i).find('input').data('track'); //库存
+            str += '<div class="flex-sb plr20 lh100 list ' + (obj.num == 0 ? 'h' : '') + '" data-id="' + obj.id +
+                '"> <span class="title">' + obj.name + '</span> <span class="color1 price">￥' + obj.price +
+                '</span> <div class="flex c_box"> <label class="wh minus" onclick="totals(this,2)"> <button class="font18 col6">−</button> </label> <input class="font18 wh tac num" readonly unselectable="on" onfocus="this.blur()" type="number" name="" value="' +
+                obj.num + '" data-id="' + obj.id + '" data-name="' + obj.name + '" data-num="' + obj.num +
+                '" data-price="' + obj.price + '" data-img="' + obj.img + '"  data-track="' + obj.track +
+                '"> <label class="wh add" onclick="totals(this,1)"> <button class="font18 col6">+</button> </label> </div> </div>'
+
+            goods_id = obj.id;
+            goods_num = obj.num;
+            console.log(obj.num)
+            if (goods_num > 0) {
+                goods[goods_id] = Number(goods_num);
+            }
+            arr.push(goods);
+        }
+        $('.shopCar').html('<p class="tae color2 lh100 plr20 del_btn">清空购物车</p>' + str).addClass('on');
+        JSON.stringify(goods)
+        // console.log(goods)
+        return goods;
+    }
+
+    // 循环清单列表
+    function getList() {
+        var obj = {};
+        var arr = [];
+        var str = '';
+        for (var i = 0; i < $('.shopCar>.list').length; i++) {
+            obj = {};
+            obj.id = $('.shopCar>.list').eq(i).find('input').data('id');
+            obj.name = $('.shopCar>.list').eq(i).find('input').data('name');
+            obj.price = $('.shopCar>.list').eq(i).find('input').data('price');
+            obj.num = $('.shopCar>.list').eq(i).find('input').val();
+            obj.img = $('.shopCar>.list').eq(i).find('input').data('img');
+            obj.track = $('.shopCar>.list').eq(i).find('input').data('track');
+            str += '<label class="list flex_a bw p20 bdb"> <img class="img" src="' + obj.img +
+                '" style="width:1.7rem;height:1.5rem;"> <ul class="ml20"> <a href="y_shopDetail.html" class="font16 title">' +
+                obj.name + '</a> <p class="mt20 col9 stock">库存：' + obj.track +
+                '</p> <div class="color1 mt20 flex-sb"> <span class="price">￥' + obj.price +
+                '</span> <div class="flex c_box"> <label class="wh minus" onclick="totals(this,2)"> <button class="font18 col6">−</button> </label> <input class="font18 wh tac num" readonly unselectable="on" onfocus="this.blur()" type="number" value="' +
+                obj.num + '" data-id="' + obj.id + '" data-name="' + obj.name + '" data-num="' + obj.num +
+                '" data-price="' + obj.price + '" data-img="' + obj.img + '"  data-track="' + obj.track +
+                '"> <label onclick="totals(this,1)" class="wh add"> <button class="font18 col6">+</button> </label> </div> </div> </ul> </label>'
+
+            goods_id = obj.id;
+            goods_num = obj.num;
+            console.log(obj.num)
+            goods[goods_id] = goods_num;
+            arr.push(goods);
+        }
+        $('.container').html(str);
+
+        JSON.stringify(goods)
+        // console.log(111111111111)
+        console.log(goods)
+        return goods;
+    }
+</script>

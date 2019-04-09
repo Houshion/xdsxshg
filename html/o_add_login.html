@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>补货登录</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+
+<body class="bfff">
+    <div class="login pd-20">
+        <div class="logoImg box pd-40">
+            <img src="../img/1.png">
+        </div>
+        <div class="name">
+            <input type="text" class="input font16" id="username" placeholder="请输入登录账户" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"
+                maxlength="11">
+        </div>
+        <div class="pass">
+            <input type="password" class="input font16" id="userpass" placeholder="请输入登录密码">
+        </div>
+        <div class="btn btn1 loginBtn mg-t-50">登录</div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    $("#username").val(getItem("userMsg") ? JSON.parse(getItem("userMsg")).mobile : "")
+    // var phone = getItem("userMsg") ? JSON.parse(getItem("userMsg")).mobile : "";
+    // $("#username").val(phone)
+    $(function () {
+        $(".loginBtn").on("click", function () {
+
+            var phone = $("#username").val();
+            var pass = $("#userpass").val();
+            var param = {
+                api_name: "staffRegister",
+                phone: phone,
+                pass: pass,
+            };
+
+            if (phone) {
+                if (isNull(pass)) {
+                    dlctipbox.show("登录密码不能为空");
+                    return false;
+                }
+                ajaxPost(param, "Wxsite/Device/api", function (res) {
+                    if (res.code == 1) {
+                        setItem("userMsg", JSON.stringify(res.data))
+                        location.href = "./o_add_index.html";
+                    } else {
+                        dlctipbox.show(res.msg);
+                    }
+                })
+            } else {
+                dlctipbox.show("请填写正确的手机号码");
+            }
+
+        })
+
+    })
+</script>

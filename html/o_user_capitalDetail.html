@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>资金明细</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+</head>
+
+<body>
+    <div class="capital">
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    var param = {
+        api_name: 'getUserDetails',
+        page: 1,
+        pagesize: 999,
+    }
+    ajaxPost(param, "Wxsite/User/api", function (res) {
+        if (res.code == 1) {
+            if (res.data.length <= 0) {
+                $(".capital").html("<div class='ta-center'>...暂无数据...</div>");
+                return false;
+            }
+            for (var i = 0; i < res.data.length; i++) {
+                var log, typeName;
+                switch (res.data[i].paytype) {
+                    case "1":
+                        typeName = "微信"
+                        break;
+                    case "2":
+                        typeName = "余额"
+                        break;
+                    case "3":
+                        typeName = "IC卡"
+                        break;
+                    case "4":
+                        typeName = "云闪付"
+                        break;
+                    case "5":
+                        typeName = "支付宝"
+                        break;
+                }
+                if (res.data[i].status == "1") {
+                    log = typeName + "消费"
+                } else {
+                    log = typeName + "充值"
+                }
+                var type = res.data[i].status == 1 ? "-" : "+"; // -为消费  +为充值
+                var color = res.data[i].status == 1 ? "" : "cgreen"; // -为消费  +为充值
+                $(".capital").append(
+                    '<div class="list bfff pd-10 border-b flexJB" data-detaiId="' + res.data[i].cash_log_id +
+                    '" data-userId="' + res.data[i].user_id + '" data-orderId="' + res.data[i].order_id +
+                    '" data-paytype="' + res.data[i].paytype + '">' +
+                    '<div>' +
+                    '<div class="font16">' + log + '</div>' +
+                    '<div class="c999">' + date('Y-m-d H:i', res.data[i].ctime) + '</div>' +
+                    '</div>' +
+                    '<div class="font20 ' + color + '">' + type + '￥' + res.data[i].money + '</div>' +
+                    '</div>'
+                )
+            }
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    })
+</script>

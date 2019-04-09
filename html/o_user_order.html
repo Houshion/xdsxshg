@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>我的订单</title>
+    <link rel="stylesheet" href="../css/o_base.css">
+    <link rel="stylesheet" href="../css/o_style.css">
+    <style>
+        .red {
+            color: red
+        }
+    </style>
+</head>
+
+<body>
+    <div class="orderList pd-10">
+        <!-- <div class="list">
+            <div class="felxJB">
+                <div class="c999 border-b flexJB pd-b-10">
+                    <div>订单编号：
+                        <span>1654968151</span>
+                    </div>
+                    <div class="cblue fontb">已完成</div>
+                </div>
+                <div class="goodsList">
+                    <div class="flex pdtb-15 border-b">
+                        <div class="wd-35">
+                            <img src="../img/o_colo.png">
+                        </div>
+                        <div class="wd-65 pd-20">
+                            <div class="mg-b-15">百事可乐</div>
+                            <div class="cyellow">￥6.00/瓶</div>
+                        </div>
+                    </div>
+                    <div class="flex pdtb-15 border-b">
+                        <div class="wd-35">
+                            <img src="../img/o_colo.png">
+                        </div>
+                        <div class="wd-65 pd-20">
+                            <div class="mg-b-15">百事可乐</div>
+                            <div class="cyellow">￥6.00/瓶</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flexJB pd-t-15">
+                    <div>共一件商品</div>
+                    <div>共计：6.00元</div>
+                </div>
+            </div>
+        </div>
+        <div class="list">
+            <div class="felxJB">
+                <div class="c999 border-b flexJB pd-b-10">
+                    <div>订单编号：
+                        <span>1654968151</span>
+                    </div>
+                    <div class="fontb cyellow">待取货</div>
+                </div>
+                <div class="flex pdtb-15 border-b">
+                    <div class="wd-35">
+                        <img src="../img/o_colo.png">
+                    </div>
+                    <div class="wd-65 pd-20">
+                        <div class="mg-b-15">百事可乐</div>
+                        <div class="cyellow">￥6.00/瓶</div>
+                    </div>
+                </div>
+                <div class="flexJB pd-t-15">
+                    <div>共一件商品</div>
+                    <div>共计：6.00元</div>
+                </div>
+            </div>
+        </div>
+        <div class="list">
+            <div class="felxJB">
+                <div class="c999 border-b flexJB pd-b-10">
+                    <div>订单编号：
+                        <span>1654968151</span>
+                    </div>
+                    <div class="cred fontb">待配送</div>
+                </div>
+                <div class="flex pdtb-15 border-b">
+                    <div class="wd-35">
+                        <img src="../img/o_colo.png">
+                    </div>
+                    <div class="wd-65 pd-20">
+                        <div class="mg-b-15">百事可乐</div>
+                        <div class="cyellow">￥6.00/瓶</div>
+                    </div>
+                </div>
+                <div class="flexJB pd-t-15">
+                    <div>共一件商品</div>
+                    <div>共计：6.00元</div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script src="../js/o_base.js"></script>
+<script>
+    var param = {
+        api_name: 'getUserOrderList',
+        page: 1,
+        pagesize: 999,
+    }
+    ajaxPost(param, "Wxsite/User/api", function (res) {
+        if (res.code == 1) {
+            if (res.data.length > 0) {
+                for (var i = 0; i < res.data.length; i++) {
+                    var type = res.data[i].type == 1 ? "未付款" : res.data[i].type == 2 ? "待取货" : res.data[i].type ==
+                        3 ? "待配送" : "已完成";
+                    var typeColor = res.data[i].type == 1 ? "red" : res.data[i].type == 2 ? "cyellow" : res.data[
+                            i]
+                        .type == 3 ? "cred" : "cblue";
+                    var goodsList = '';
+                    var goods = res.data[i].goods;
+                    for (var j = 0; j < goods.length; j++) {
+                        goodsList += '<div class="flex pdtb-15 border-b" data-goodsId="' + goods[j].goods_id +
+                            '">' +
+                            '<div class="wd-35">' +
+                            '<img src="' + goods[j].goods_img + '">' +
+                            '</div>' +
+                            '<div class="wd-65 pd-20">' +
+                            '<div class="mg-b-15">' + goods[j].goods_name + '</div>' +
+                            '<div class="cyellow">￥' + goods[j].goods_price + '/' + goods[j].goods_unit +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+                    }
+                    $(".orderList").append(
+                        '<div class="list" data-orderid="' + res.data[i].order_id + '">' +
+                        '<div class="felxJB">' +
+                        '<div class="c999 border-b flexJB pd-b-10">' +
+                        '<div>订单编号： <span>' + res.data[i].oid + '</span></div>' +
+                        '<div class="' + typeColor + ' fontb">' + type + '</div>' +
+                        '</div>' +
+                        '<div class="goodsList">' + goodsList + '</div>' +
+                        '<div class="flexJB pd-t-15">' +
+                        '<div>共' + res.data[i].goods_count + '件商品</div>' +
+                        '<div>共计：' + res.data[i].count_price + '元</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>'
+                    )
+                }
+            } else {
+                $(".orderList").html("<div class='ta-center'>...暂无数据...</div>");
+            }
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    })
+
+    $(".orderList").on("click", ".list", function () {
+        // console.log($(this).data('orderid'))
+        window.location.href = "./o_user_orderDetail.html?orderId=" + $(this).data('orderid');
+    })
+</script>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>货道测试</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="../css/common.css" />
+    <link rel="stylesheet" href="../css/dropload.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .test_btn {
+        width: .8rem;
+        height: .5rem;
+        color: #fff;
+        border-radius: .1rem;
+        background: linear-gradient(to right, #ffaf17, #ff9817);
+    }
+    </style>
+
+    <body class="bw">
+        <section class="ListBox">
+            <div class="main_list">
+                <!-- <div class="flex-sb p20 bdb">
+                    <ul>
+                        <li><span class="col9">设备编号：</span>01215224</li>
+                        <li><span class="col9 mt10">设备地址：</span>东莞市南城区高盛科技园</li>
+                    </ul>
+                    <li class="test_btn flex">测试</li>
+                </div> -->
+            </div>
+        </section>
+    </body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/dropload.min.js"></script>
+<script src="../js/dlc.js"></script>
+<script>
+var page = 0,
+    size = 10;
+$('.ListBox').dropload({
+    scrollArea: window,
+    domDown: {
+        domClass: 'dropload-up',
+        domRefresh: '<div class="dropload-refresh">↓下拉刷新</div>',
+        domUpdate: '<div class="dropload-update">↑释放更新</div>',
+        domLoad: '<div class="dropload-load">○加载中...</div>'
+    },
+    domDown: {
+        domClass: 'dropload-down',
+        domRefresh: '<div class="dropload-refresh">↑上拉加载更多</div>',
+        domLoad: '<div class="dropload-load"><span class="loadings"></span>加载中...</div>',
+        domNoData: '<div class="dropload-noData">暂无数据</div>'
+    },
+    loadDownFn: function(me) {
+        page++;
+        var str = '';
+        $.ajax({
+            type: 'post',
+            url: dlcUrl() + "Wxsite/Device/api",
+            data: { api_name: 'getGoodsTestList', page: page, pagesize: size },
+            async: false,
+            dataType: 'json',
+            success: function(res) {
+                console.log(res);
+                $('.balance').text(res.data.balance == null ? '0' : res.data.balance); //我的余额
+                var a = res.data;
+                if (res.code == 1 && a.length > 0) {
+                    for (i in a) {
+                        str += '<a class="flex-sb p20 bdb" data-id=' + a[i].device_id + ' href="y_testDetail.html?id=' + a[i].device_id + '">' +
+                            '<ul>' +
+                            '<li><span class="col9">设备编号：</span>' + a[i].macno + '</li>' +
+                            '<li><span class="col9 mt10">设备地址：</span>' + a[i].address + '</li>' +
+                            '</ul>' +
+                            '<li class="test_btn flex">测试</li>' +
+                            '</a>';
+                    }
+                } else {
+                    me.lock();
+                    me.noData();
+                    console.log(res.msg);
+                }
+                setTimeout(function() {
+                    $('.main_list').append(str);
+                    me.resetload(); // 每次数据插入，必须重置
+                }, 1000);
+
+
+
+            },
+            error: function(err) {
+                me.resetload();
+                console.log(JSON.stringify(err));
+            }
+        })
+    }
+})
+</script>

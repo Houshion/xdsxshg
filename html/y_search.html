@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>附近网点</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+        window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+</head>
+<style type="text/css">
+    #container {
+        height: calc(100% + 20px);
+        position: absolute !important;
+        width: 100%;
+    }
+
+    .mBox {
+        display: none;
+    }
+
+    #tool {
+        width: 100%;
+        position: absolute;
+        height: 70px;
+        bottom: 4%;
+        left: 0;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    .getlocal {
+        position: absolute;
+        top: -50%;
+        right: .24rem;
+    }
+
+    .smnoprint {
+        display: none;
+    }
+
+    img.csssprite {
+        width: 100%;
+    }
+
+    .search {
+        width: 100%;
+        height: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .inner_box {
+        width: 7.02rem;
+        height: .8rem;
+        background: #f1f1f1;
+        border-radius: 50px;
+    }
+
+    input {
+        background: none;
+    }
+
+
+    .loc2 {
+        padding: .2rem 0;
+        border-top: 1px solid #e8e8e8;
+    }
+
+    .qhm {
+        position: absolute;
+        top: 3.57rem;
+        left: .75rem;
+        background: #fff;
+        width: 6.4rem;
+        height: 3.74rem;
+    }
+
+    .input_box {
+        width: 5.4rem;
+        height: 1rem;
+        border-radius: 50px;
+        background: #f1f1f1;
+        margin: .5rem auto;
+    }
+</style>
+
+<body>
+    <div class="search bw flex bdb">
+        <div class="inner_box flex_a">
+            <img src="../img/search.png" style='width: .28rem;height: .28rem;margin-right: .2rem;margin-left: .2rem;' />
+            <form action="javascript:return true">
+                <input class="search" type="text" name="search" placeholder="输入搜索地址" />
+            </form>
+        </div>
+    </div>
+    <div class="bw w100 hideBox">
+        <!-- <li class="bdb flex-sb p30 list" data-lat='' data-lng=''>
+            <ul>
+                <img src="../img/11.png" style="width:.3rem;height:.3rem;" />
+                <span class="ml20">东莞市南城区第一国际</span>
+            </ul>
+            <img src="../img/13.png" style="width:.22rem;height:.22rem" />
+        </li> -->
+    </div>
+    <p class="tac lh100 color2" id="history">清除搜索记录</p>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/o_base.js" type="text/javascript" charset="utf-8"></script>
+<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
+<script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="https://gw.alipayobjects.com/as/g/h5-lib/alipayjsapi/3.1.0/alipayjsapi.inc.min.js"></script>
+<script>
+    var searchData = {};
+    var arr = [];
+    if (getItem('search')) {
+        arr = getItem('search').split(',');
+    }
+    $('.search').val(UrlSearch('search'));
+
+    $('.search').keypress(function (e) {
+        if (e.keyCode == 13) { //鼠标确认的时候触发
+            if ($(this).val() != '') {
+                arr.push($(this).val());
+                search();
+                location.href = "y_map.html?search=" + $(this).val()
+            }
+            console.log(arr);
+        }
+    })
+
+    function unique1(array) {
+        var n = []; //一个新的临时数组
+        //遍历当前数组
+        for (var i = 0; i < array.length; i++) {
+            //如果当前数组的第i已经保存进了临时数组，那么跳过，
+            //否则把当前项push到临时数组里面
+            if (n.indexOf(array[i]) == -1) n.push(array[i]);
+        }
+        return n;
+    }
+    // 单条数据清除
+    $('.hideBox').on('click', '.del', function () {
+        $(this).parents('.list').remove();
+        // location.href ='y_map.html?lat='+$(this.data('lat')+'&let='+$(this).data(lng));
+    })
+    // 清空历史记录
+    $('#history').on('click', function () {
+        $('.list').remove();
+        $('#history').css('display', 'none');
+        setItem('search', '');
+    })
+    search();
+    // 获取搜索数据
+    function search() {
+        var str = '';
+        arr = unique1(arr);
+        setItem('search', arr);
+        for (i in arr) {
+            str += '<a class="bdb flex-sb p30 list" href="y_map.html?search=' + arr[i] +
+                '"> <ul> <img src="../img/11.png" style="width:.3rem;height:.3rem;" /> <span class="ml20">' + arr[i] +
+                '</span> </ul> <img class="del" src="../img/13.png" style="width:.22rem;height:.22rem" /></a>'
+        }
+        if (str) {
+            $('.hideBox').html(str).show();
+            $('#history').css('display', 'block');
+        }
+    }
+</script>
